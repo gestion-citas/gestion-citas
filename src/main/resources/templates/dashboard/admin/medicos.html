@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médicos - Gestión Médica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; }
+        .navbar { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .navbar-brand { font-weight: 700; font-size: 1.5em; }
+        .btn-logout {
+            color: white !important;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .sidebar { background: #2c3e50; min-height: 100vh; }
+        .sidebar a { color: white; text-decoration: none; display: block; padding: 15px 20px; transition: all 0.3s; }
+        .sidebar a:hover { background: #667eea; padding-left: 30px; }
+        .content { padding: 30px; }
+        table { background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR CON BOTÓN SALIR -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/admin}">
+                <i class="fas fa-hospital"></i> Gestión Médica
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span style="color: white; margin-right: 20px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-user-circle"></i>
+                            <span th:text="${usuarioNombre}">Usuario</span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/auth/logout}" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row g-0">
+        <!-- SIDEBAR -->
+        <div class="col-md-3 sidebar">
+            <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <h5 style="color: white; margin: 0;"><i class="fas fa-bars"></i> Menú</h5>
+            </div>
+            <a th:href="@{/admin}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a th:href="@{/admin/usuarios}"><i class="fas fa-users"></i> Usuarios</a>
+            <a th:href="@{/admin/medicos}" style="background: #667eea;"><i class="fas fa-user-md"></i> Médicos</a>
+            <a th:href="@{/admin/pacientes}"><i class="fas fa-heart"></i> Pacientes</a>
+            <a th:href="@{/admin/especialidades}"><i class="fas fa-stethoscope"></i> Especialidades</a>
+            <a th:href="@{/admin/citas}"><i class="fas fa-calendar"></i> Citas</a>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="col-md-9 content">
+            <h2 style="color: #667eea; font-weight: 700; margin-bottom: 20px;">
+                <i class="fas fa-user-md"></i> Médicos
+            </h2>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Especialidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="medico : ${medicos}">
+                        <td th:text="${medico.idMedico}">-</td>
+                        <td th:text="${medico.nombres}">-</td>
+                        <td th:text="${medico.apellidos}">-</td>
+                        <td th:text="${medico.dni}">-</td>
+                        <td th:text="${medico.email}">-</td>
+                        <td th:text="${medico.telefono}">-</td>
+                        <td th:text="${medico.especialidad != null ? medico.especialidad.nombre : 'Sin especialidad'}">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita - Gestión de Citas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sidebar-brand i {
+            font-size: 28px;
+        }
+
+        .sidebar-text {
+            font-size: 12px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 160px;
+            width: calc(100% - 160px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .navbar-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-title p {
+            font-size: 13px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-info-top {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .user-info-top p {
+            margin: 0;
+        }
+
+        .content {
+            padding: 40px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-title i {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .sidebar-nav a span {
+                display: none;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .navbar-user {
+                justify-content: center;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <ul class="sidebar-nav">
+            <li>
+                <a href="/paciente/dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/citas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Mis Citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/registrar-cita" class="active">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nueva Cita</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/perfil">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+            <li style="margin-top: 30px;">
+                <a href="/auth/logout" style="color: rgba(255, 255, 255, 0.6);">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="navbar-title">
+                <div>
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <div>
+                    <h1>Nueva Cita</h1>
+                    <p>Programa tu cita médica</p>
+                </div>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info-top">
+                    <p th:text="${nombrePaciente}">Nombre Paciente</p>
+                    <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Paciente</p>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="form-card">
+                <h2 class="form-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    Agendar Nueva Cita
+                </h2>
+                
+                <form id="citaForm">
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad: *</label>
+                        <select class="form-control" id="especialidad" name="especialidad" required>
+                            <option value="">Seleccione una especialidad</option>
+                            <option th:each="especialidad : ${especialidades}" 
+                                    th:value="${especialidad.idEspecialidad}"
+                                    th:text="${especialidad.nombre}">
+                                Especialidad
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medico">Médico: *</label>
+                        <select class="form-control" id="medico" name="medico" required disabled>
+                            <option value="">Primero seleccione una especialidad</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha">Fecha: *</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora">Hora: *</label>
+                        <select class="form-control" id="hora" name="hora" required>
+                            <option value="">Seleccione una hora</option>
+                            <option value="08:00">08:00 AM</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                            <option value="17:00">05:00 PM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motivo">Motivo de la consulta: *</label>
+                        <textarea class="form-control" id="motivo" name="motivo" rows="3" 
+                                placeholder="Describa brevemente el motivo de su consulta" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnSubmit">
+                        <i class="fas fa-calendar-check"></i> Agendar Cita
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha').setAttribute('min', today);
+
+        // Manejar cambio de especialidad
+        document.getElementById('especialidad').addEventListener('change', function() {
+            const especialidadId = this.value;
+            const medicoSelect = document.getElementById('medico');
+            
+            if (!especialidadId) {
+                medicoSelect.innerHTML = '<option value="">Primero seleccione una especialidad</option>';
+                medicoSelect.disabled = true;
+                return;
+            }
+            
+            medicoSelect.disabled = true;
+            medicoSelect.innerHTML = '<option value="">Cargando médicos...</option>';
+            
+            fetch(`/paciente/medicos-por-especialidad/${especialidadId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(medicos => {
+                    medicoSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+                    
+                    if (!medicos || medicos.length === 0) {
+                        medicoSelect.innerHTML = '<option value="">No hay médicos disponibles en esta especialidad</option>';
+                        medicoSelect.disabled = true;
+                        return;
+                    }
+                    
+                    medicos.forEach(medico => {
+                        const option = document.createElement('option');
+                        option.value = medico.idMedico;
+                        option.textContent = `Dr. ${medico.nombres} ${medico.apellidos}`;
+                        medicoSelect.appendChild(option);
+                    });
+                    
+                    medicoSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error cargando médicos:', error);
+                    medicoSelect.innerHTML = '<option value="">Error al cargar médicos</option>';
+                    medicoSelect.disabled = true;
+                });
+        });
+
+        document.getElementById('citaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const medicoId = document.getElementById('medico').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const motivo = document.getElementById('motivo').value;
+            const btnSubmit = document.getElementById('btnSubmit');
+            
+            if (!medicoId || !fecha || !hora || !motivo.trim()) {
+                return;
+            }
+
+            // Deshabilitar el botón mientras se procesa
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+
+            // Crear FormData para enviar
+            const formData = new FormData();
+            formData.append('medicoId', medicoId);
+            formData.append('fecha', fecha);
+            formData.append('hora', hora);
+            formData.append('motivo', motivo);
+
+            // Enviar usando fetch
+            fetch('/paciente/registrar-cita', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.replace('/paciente/citas');
+                } else {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="fas fa-calendar-check"></i> Agendar Cita';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-calendar-check"></i> Agendar Cita';
+            });
+        });
+
+        // Validar que la fecha no sea anterior a hoy
+        document.getElementById('fecha').addEventListener('input', function(e) {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const fechaSeleccionada = new Date(this.value);
+            
+            if (fechaSeleccionada < hoy) {
+                this.value = '';
+            }
+        });
+
+        // Marcar enlace activo en el sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports 
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="citas_por_medico" pageWidth="595" pageHeight="842" 
+              columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    
+    <field name="idCita" class="java.lang.Integer"/>
+    <field name="fecha" class="java.sql.Date"/>
+    <field name="hora" class="java.lang.String"/>
+    <field name="nombreMedico" class="java.lang.String"/>
+    <field name="nombrePaciente" class="java.lang.String"/>
+    <field name="especialidad" class="java.lang.String"/>
+    <field name="motivo" class="java.lang.String"/>
+    <field name="estado" class="java.lang.String"/>
+    
+    <title>
+        <band height="60">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="40"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text>Reporte de Citas por Médico</text>
+            </staticText>
+        </band>
+    </title>
+    
+    <pageHeader height="40">
+        <staticText>
+            <reportElement x="0" y="0" width="555" height="30"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="12" isBold="true"/>
+            </textElement>
+            <text>Fecha de Generación: ${new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())}</text>
+        </staticText>
+    </pageHeader>
+    
+    <columnHeader height="30">
+        <staticText>
+            <reportElement x="0" y="0" width="70" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>ID</text>
+        </staticText>
+        <staticText>
+            <reportElement x="70" y="0" width="75" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Fecha</text>
+        </staticText>
+        <staticText>
+            <reportElement x="145" y="0" width="60" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Hora</text>
+        </staticText>
+        <staticText>
+            <reportElement x="205" y="0" width="110" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Médico</text>
+        </staticText>
+        <staticText>
+            <reportElement x="315" y="0" width="110" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Paciente</text>
+        </staticText>
+        <staticText>
+            <reportElement x="425" y="0" width="130" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Motivo</text>
+        </staticText>
+    </columnHeader>
+    
+    <detail height="25">
+        <textField>
+            <reportElement x="0" y="0" width="70" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{idCita}.toString()]]></textFieldExpression>
+        </textField>
+        <textField pattern="dd/MM/yyyy">
+            <reportElement x="70" y="0" width="75" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.sql.Date"><![CDATA[$F{fecha}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="145" y="0" width="60" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{hora}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="205" y="0" width="110" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{nombreMedico}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="315" y="0" width="110" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{nombrePaciente}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="425" y="0" width="130" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{motivo}]]></textFieldExpression>
+        </textField>
+    </detail>
+    
+    <pageFooter height="30">
+        <staticText>
+            <reportElement x="0" y="5" width="300" height="20"/>
+            <textElement verticalAlignment="Middle"><font size="8"/></textElement>
+            <text>Sistema de Gestión de Citas</text>
+        </staticText>
+        <textField>
+            <reportElement x="450" y="5" width="105" height="20"/>
+            <textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+        </textField>
+    </pageFooter>
+</jasperReport>

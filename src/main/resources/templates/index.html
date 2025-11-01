@@ -1,118 +1,867 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión Médica - Inicio</title>
-    
-    <!-- Bootstrap 5 -->
+    <title>CJ - Médicos | Sistema de Gestión de Citas Médicas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #667eea !important;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: #667eea !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-register-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            color: white;
+            margin-left: 0.5rem;
+        }
+
+        .btn-register-navbar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Medicos Section */
+        .medicos-section {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .medico-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            height: 100%;
+        }
+
+        .medico-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        .medico-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .medico-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+
+        .medico-info {
+            padding: 1.5rem;
+        }
+
+        .medico-info h4 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .medico-especialidad {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .medico-contacto {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .medico-contacto i {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        /* Especialidades Section */
+        .especialidades-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .especialidad-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .especialidad-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        .especialidad-card i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .especialidad-card h4 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Modal */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0.7rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .btn-register-navbar {
+                margin-left: 0;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
-    
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-heartbeat"></i> CJ - Médicos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#medicos">Médicos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#especialidades">Especialidades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-register-navbar" data-bs-toggle="modal" data-bs-target="#registroPacienteModal">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mx-auto text-center fade-in">
-                    <h1 class="display-3 fw-bold mb-4">
-                        <i class="fas fa-heartbeat me-3"></i>
-                        Salud a un Clic
-                    </h1>
-                    <p class="lead mb-4">
-                        Gestiona tus citas médicas de forma fácil y rápida
-                    </p>
-                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                        <a href="/citas/nueva" class="btn btn-light btn-lg px-4">
-                            <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
-                        </a>
-                        <a href="/especialidades" class="btn btn-outline-light btn-lg px-4">
-                            <i class="fas fa-stethoscope me-2"></i>Ver Especialidades
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1><i class="fas fa-heartbeat"></i> Sistema de Gestión de Citas Médicas</h1>
+            <p>Cuida tu salud con nuestro servicio de citas médicas en línea</p>
         </div>
     </section>
-    
-    <!-- Estadísticas -->
-    <section class="py-5 bg-light">
+
+    <!-- Stats Section -->
+    <section class="stats">
         <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
-                            <h3 class="fw-bold" th:text="${totalMedicos}">0</h3>
-                            <p class="text-muted mb-0">Médicos</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-users fa-3x text-success mb-3"></i>
-                            <h3 class="fw-bold" th:text="${totalPacientes}">0</h3>
-                            <p class="text-muted mb-0">Pacientes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-calendar-check fa-3x text-info mb-3"></i>
-                            <h3 class="fw-bold" th:text="${totalCitas}">0</h3>
-                            <p class="text-muted mb-0">Citas Hoy</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <i class="fas fa-stethoscope fa-3x text-warning mb-3"></i>
-                            <h3 class="fw-bold" th:text="${totalEspecialidades}">0</h3>
-                            <p class="text-muted mb-0">Especialidades</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Especialidades Destacadas -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-5 fw-bold">Nuestras Especialidades</h2>
             <div class="row">
-                <div th:each="especialidad : ${especialidades}" class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-heartbeat fa-3x text-primary mb-3"></i>
-                            <h5 class="card-title" th:text="${especialidad.nombre}">Especialidad</h5>
-                            <p class="text-muted">Atención especializada y de calidad</p>
-                            <a th:href="@{'/medicos?especialidad=' + ${especialidad.idEspecialidad}}" 
-                               class="btn btn-outline-primary">
-                                Ver Médicos
-                            </a>
+                <div class="col-md-3 col-sm-6 stat-box">
+                    <div class="stat-number" th:text="${totalPacientes}">12</div>
+                    <div class="stat-label">Pacientes Atendidos</div>
+                </div>
+                <div class="col-md-3 col-sm-6 stat-box">
+                    <div class="stat-number" th:text="${totalMedicos}">4</div>
+                    <div class="stat-label">Médicos Especialistas</div>
+                </div>
+                <div class="col-md-3 col-sm-6 stat-box">
+                    <div class="stat-number" th:text="${totalEspecialidades}">3</div>
+                    <div class="stat-label">Especialidades Médicas</div>
+                </div>
+                <div class="col-md-3 col-sm-6 stat-box">
+                    <div class="stat-number" th:text="${totalUsuarios}">3</div>
+                    <div class="stat-label">Usuarios del Sistema</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">¿Por qué elegirnos?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-user-md"></i>
+                        <h3>Especialistas Calificados</h3>
+                        <p>Acceso a especialistas calificados para tu atención médica integral.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>Agendamiento Rápido</h3>
+                        <p>Agenda citas de forma rápida, sencilla y desde cualquier dispositivo.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-stethoscope"></i>
+                        <h3>Atención Profesional</h3>
+                        <p>Equipo médico altamente calificado y con amplia experiencia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Médicos Section -->
+    <section class="medicos-section" id="medicos">
+        <div class="container">
+            <h2 class="section-title">Nuestros Médicos</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" th:each="medico : ${medicos}">
+                    <div class="medico-card">
+                        <div class="medico-header">
+                            <div class="medico-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <h3 th:text="${medico.nombres + ' ' + medico.apellidos}">Dr. Juan</h3>
+                        </div>
+                        <div class="medico-info">
+                            <p class="medico-especialidad" th:text="${medico.especialidad.nombre}">Cardiología</p>
+                            <div class="medico-contacto">
+                                <div><i class="fas fa-envelope"></i> <span th:text="${medico.email}">correo@ejemplo.com</span></div>
+                                <div><i class="fas fa-phone"></i> <span th:text="${medico.telefono}">+51 999 999 999</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
+
+    <!-- Especialidades Section -->
+    <section class="especialidades-section" id="especialidades">
+        <div class="container">
+            <h2 class="section-title">Especialidades Disponibles</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" th:each="especialidad : ${especialidades}">
+                    <div class="especialidad-card">
+                        <i class="fas fa-heart"></i>
+                        <h4 th:text="${especialidad.nombre}">Especialidad</h4>
+                        <p th:text="${especialidad.descripcion} ?: 'No hay descripción disponible para esta especialidad'">Descripción de la especialidad</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
-    
-    <!-- Bootstrap JS -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 CJ - Médicos. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL REGISTRO PACIENTE -->
+    <!-- Modal de Inicio de Sesión -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <!-- Header del Modal -->
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="loginLabel">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body del Modal -->
+                <div class="modal-body">
+                    <!-- Error General -->
+                    <div id="loginError" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="loginErrorMsg"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <form action="/auth/login" method="POST">
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">
+                                <i class="fas fa-user"></i> Usuario
+                            </label>
+                            <input type="text" class="form-control" id="loginUsername" name="username" 
+                                   placeholder="Ingresa tu usuario" required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">
+                                <i class="fas fa-lock"></i> Contraseña
+                            </label>
+                            <input type="password" class="form-control" id="loginPassword" name="password" 
+                                   placeholder="Ingresa tu contraseña" required>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt"></i> Ingresar
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+
+                        <!-- Link para registrarse -->
+                        <div class="text-center mt-3">
+                            <small>¿No tienes cuenta? 
+                                <a href="#" onclick="cerrarLoginYAbrir(); return false;" style="color: #007bff; text-decoration: none; font-weight: bold;">
+                                    Regístrate aquí
+                                </a>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registroPacienteModal" tabindex="-1" aria-labelledby="registroPacienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Header del Modal -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registroPacienteLabel">
+                        <i class="fas fa-user-plus"></i> Registrarse como Paciente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body del Modal -->
+                <div class="modal-body">
+                    <form id="formRegistroPaciente" method="POST" action="/auth/register">
+                        <div class="row">
+                            <!-- Nombres -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nombres" class="form-label">Nombres *</label>
+                                <input type="text" class="form-control" id="nombres" name="nombres" 
+                                       placeholder="Ej: Juan" required>
+                                <small class="text-danger" id="errorNombres"></small>
+                            </div>
+
+                            <!-- Apellidos -->
+                            <div class="col-md-6 mb-3">
+                                <label for="apellidos" class="form-label">Apellidos *</label>
+                                <input type="text" class="form-control" id="apellidos" name="apellidos" 
+                                       placeholder="Ej: Pérez García" required>
+                                <small class="text-danger" id="errorApellidos"></small>
+                            </div>
+
+                            <!-- Usuario -->
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Usuario *</label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Ej: juanperez" required>
+                                <small class="text-muted">Mínimo 5 caracteres</small>
+                                <small class="text-danger" id="errorUsername"></small>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Correo Electrónico *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Ej: juan@gmail.com" required>
+                                <small class="text-danger" id="errorEmail"></small>
+                            </div>
+
+                            <!-- DNI -->
+                            <div class="col-md-6 mb-3">
+                                <label for="dni" class="form-label">DNI *</label>
+                                <input type="text" class="form-control" id="dni" name="dni" 
+                                       placeholder="Ej: 12345678" maxlength="8" required>
+                                <small class="text-muted">8 dígitos</small>
+                                <small class="text-danger" id="errorDni"></small>
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                       placeholder="Ej: 987654321" required>
+                                <small class="text-danger" id="errorTelefono"></small>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Contraseña *</label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Mínimo 6 caracteres" required>
+                                <small class="text-muted">Mínimo 6 caracteres</small>
+                                <small class="text-danger" id="errorPassword"></small>
+                            </div>
+
+                            <!-- Confirmar Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="passwordConfirm" class="form-label">Confirmar Contraseña *</label>
+                                <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" 
+                                       placeholder="Repite tu contraseña" required>
+                                <small class="text-danger" id="errorPasswordConfirm"></small>
+                            </div>
+
+                            <!-- Términos y condiciones -->
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terminos" name="terminos" required>
+                                    <label class="form-check-label" for="terminos">
+                                        Acepto los <a href="#" target="_blank">términos y condiciones</a>
+                                    </label>
+                                </div>
+                                <small class="text-danger" id="errorTerminos"></small>
+                            </div>
+
+                            <!-- Mensaje de éxito/error -->
+                            <div class="col-12 mb-3">
+                                <div id="mensajeExito" class="alert alert-success d-none" role="alert">
+                                    <i class="fas fa-check-circle"></i> ¡Registro exitoso! Bienvenido.
+                                </div>
+                                <div id="mensajeError" class="alert alert-danger d-none" role="alert">
+                                    <i class="fas fa-exclamation-circle"></i> <span id="textoError"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer del Modal -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-register-navbar" id="btnRegistrar">
+                        <i class="fas fa-save"></i> Registrarse
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validar y registrar paciente
+        document.getElementById('btnRegistrar').addEventListener('click', function() {
+            // Limpiar errores
+            document.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+            document.getElementById('mensajeError').classList.add('d-none');
+            document.getElementById('mensajeExito').classList.add('d-none');
+
+            // Obtener valores
+            const nombres = document.getElementById('nombres').value.trim();
+            const apellidos = document.getElementById('apellidos').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const dni = document.getElementById('dni').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+            // Validaciones
+            let hasErrors = false;
+
+            if (!nombres || nombres.length < 2) {
+                document.getElementById('errorNombres').textContent = 'Ingresa un nombre válido';
+                hasErrors = true;
+            }
+
+            if (!apellidos || apellidos.length < 2) {
+                document.getElementById('errorApellidos').textContent = 'Ingresa apellidos válidos';
+                hasErrors = true;
+            }
+
+            if (!username || username.length < 5) {
+                document.getElementById('errorUsername').textContent = 'El usuario debe tener mínimo 5 caracteres';
+                hasErrors = true;
+            }
+
+            if (!email || !email.includes('@')) {
+                document.getElementById('errorEmail').textContent = 'Ingresa un email válido';
+                hasErrors = true;
+            }
+
+            if (!dni || dni.length !== 8 || isNaN(dni)) {
+                document.getElementById('errorDni').textContent = 'El DNI debe tener 8 dígitos';
+                hasErrors = true;
+            }
+
+            if (!telefono || telefono.length < 7) {
+                document.getElementById('errorTelefono').textContent = 'Ingresa un teléfono válido';
+                hasErrors = true;
+            }
+
+            if (!password || password.length < 6) {
+                document.getElementById('errorPassword').textContent = 'La contraseña debe tener mínimo 6 caracteres';
+                hasErrors = true;
+            }
+
+            if (password !== passwordConfirm) {
+                document.getElementById('errorPasswordConfirm').textContent = 'Las contraseñas no coinciden';
+                hasErrors = true;
+            }
+
+            if (!document.getElementById('terminos').checked) {
+                document.getElementById('errorTerminos').textContent = 'Debes aceptar los términos y condiciones';
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+
+            // Enviar registro
+            fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    nombres: nombres,
+                    apellidos: apellidos,
+                    username: username,
+                    email: email,
+                    dni: dni,
+                    telefono: telefono,
+                    password: password,
+                    passwordConfirm: passwordConfirm
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('mensajeExito').classList.remove('d-none');
+                    document.getElementById('formRegistroPaciente').reset();
+                    setTimeout(() => {
+                        window.location.href = '/auth/login';
+                    }, 2000);
+                } else {
+                    document.getElementById('mensajeError').classList.remove('d-none');
+                    document.getElementById('textoError').textContent = data.error || 'Error en el registro';
+                }
+            })
+            .catch(error => {
+                document.getElementById('mensajeError').classList.remove('d-none');
+                document.getElementById('textoError').textContent = 'Error al conectar con el servidor';
+                console.error('Error:', error);
+            });
+        });
+
+        // Permitir registrar con Enter
+        document.getElementById('passwordConfirm').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('btnRegistrar').click();
+            }
+        });
+    </script>
+
+    <!-- Script completo para manejo de modales y login -->
+<script>
+    // Función para cerrar modal de login y abrir modal de registro
+    function cerrarLoginYAbrir() {
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+        if (loginModal) {
+            loginModal.hide();
+        }
+        
+        setTimeout(() => {
+            const registroModal = new bootstrap.Modal(document.getElementById('registroPacienteModal'));
+            registroModal.show();
+        }, 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Mostrar modal si viene de redirect de login
+        if (urlParams.get('login') === 'true') {
+            console.log("📌 Abriendo modal de login");
+            setTimeout(() => {
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 300);
+        }
+        
+        // Mostrar mensajes de error si existen
+        const urlError = urlParams.get('error');
+        if (urlError) {
+            const loginError = document.getElementById('loginError');
+            const loginErrorMsg = document.getElementById('loginErrorMsg');
+            if (loginError && loginErrorMsg) {
+                let errorMessage = 'Error de login';
+                switch(urlError) {
+                    case 'invalid_credentials':
+                        errorMessage = 'Usuario o contraseña incorrectos';
+                        break;
+                    case 'inactive_user':
+                        errorMessage = 'Usuario inactivo';
+                        break;
+                    case 'server_error':
+                        errorMessage = 'Error del servidor';
+                        break;
+                }
+                loginErrorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + errorMessage;
+                loginError.style.display = 'block';
+                
+                // Mostrar modal de login con error
+                setTimeout(() => {
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }, 300);
+            }
+        }
+
+        // Limpiar errores cuando se abren los modales
+        document.getElementById('loginModal').addEventListener('show.bs.modal', function() {
+            const loginError = document.getElementById('loginError');
+            if (loginError) {
+                loginError.style.display = 'none';
+            }
+            // Limpiar campos del formulario
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        });
+
+        // Focus automático en el campo usuario cuando se abre el modal
+        document.getElementById('loginModal').addEventListener('shown.bs.modal', function() {
+            document.getElementById('loginUsername').focus();
+        });
+
+        // Permitir login con Enter
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('#loginModal form').submit();
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>

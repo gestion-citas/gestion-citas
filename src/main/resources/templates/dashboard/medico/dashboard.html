@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Médico - Gestión de Citas</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sidebar-brand i {
+            font-size: 28px;
+        }
+
+        .sidebar-text {
+            font-size: 12px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .navbar-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-title p {
+            font-size: 13px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-info-top {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .user-info-top p {
+            margin: 0;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card.blue {
+            border-left-color: #667eea;
+        }
+
+        .stat-card.orange {
+            border-left-color: #ffa502;
+        }
+
+        .stat-card.cyan {
+            border-left-color: #00d4ff;
+        }
+
+        .stat-card.green {
+            border-left-color: #00c853;
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .stat-card.blue .stat-icon {
+            background: #667eea15;
+            color: #667eea;
+        }
+
+        .stat-card.orange .stat-icon {
+            background: #ffa50215;
+            color: #ffa502;
+        }
+
+        .stat-card.cyan .stat-icon {
+            background: #00d4ff15;
+            color: #00d4ff;
+        }
+
+        .stat-card.green .stat-icon {
+            background: #00c85315;
+            color: #00c853;
+        }
+
+        .stat-content h3 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .stat-content p {
+            font-size: 12px;
+            color: #999;
+            margin: 5px 0 0 0;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .quick-actions h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .action-btn i {
+            font-size: 18px;
+        }
+
+        /* Upcoming Appointments */
+        .upcoming-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .upcoming-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 280px;
+                width: calc(100% - 280px);
+            }
+
+            .sidebar-nav a span {
+                display: none;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .navbar-user {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Sidebar -->
+    <div th:replace="~{fragments/medico-sidebar :: sidebar}"></div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="navbar-title">
+                <div>
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div>
+                    <h1>Panel del Médico</h1>
+                    <p>Gestiona tus citas y pacientes</p>
+                </div>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info-top">
+                    <p th:text="${nombreMedico}">Nombre Médico</p>
+                    <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Médico</p>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Mensaje de Error para Médico Inactivo -->
+            <div th:if="${medicoInactivo}" style="background: #ff4757; color: white; padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: center;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
+                <h3 style="margin: 0 0 10px 0;">Cuenta Inactiva</h3>
+                <p style="margin: 0; font-size: 16px;" th:text="${error}">Su cuenta de médico está inactiva. Contacte al administrador para activarla.</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+                    Dr(a). <span th:text="${nombreMedico}">Nombre del Médico</span>
+                </p>
+            </div>
+
+            <!-- Información de la Especialidad -->
+            <div class="specialty-info" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background: #667eea15; padding: 15px; border-radius: 10px;">
+                        <i class="fas fa-stethoscope" style="font-size: 24px; color: #667eea;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; color: #333; font-size: 20px;" th:text="'Especialidad: ' + (${especialidadMedico} ?: 'Sin especialidad')">Especialidad: Cardiología</h3>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;" th:text="${especialidadDescripcion} ?: 'No especificada'">Descripción de la especialidad</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Title -->
+            <div class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                Mis Estadísticas como <span th:text="${especialidadMedico} ?: 'Médico'">Especialista</span>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Total Citas -->
+                <div class="stat-card blue">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${totalCitas}">0</h3>
+                        <p>Citas registradas</p>
+                    </div>
+                </div>
+
+                <!-- Citas Pendientes -->
+                <div class="stat-card orange">
+                    <div class="stat-icon">
+                        <i class="fas fa-hourglass-end"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${citasPendientes}">0</h3>
+                        <p>Por confirmar o atender</p>
+                    </div>
+                </div>
+
+                <!-- Citas Hoy -->
+                <div class="stat-card cyan">
+                    <div class="stat-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${citasHoy}">0</h3>
+                        <p>Programadas para hoy</p>
+                    </div>
+                </div>
+
+                <!-- Total Pacientes -->
+                <div class="stat-card green">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${totalPacientes}">0</h3>
+                        <p>Pacientes únicos</p>
+                    </div>
+                </div>
+
+                <!-- Citas Atendidas -->
+                <div class="stat-card" style="border-left-color: #28a745;">
+                    <div class="stat-icon" style="background: #28a74515; color: #28a745;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 th:text="${citasAtendidas}">0</h3>
+                        <p>Citas atendidas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Acciones Rápidas</h3>
+                <div class="actions-grid">
+                    <button onclick="toggleCitasSection()" class="action-btn" style="cursor: pointer;">
+                        <i class="fas fa-calendar-check"></i>
+                        Ver Mis Citas
+                    </button>
+                    <a href="/medico/pacientes" class="action-btn">
+                        <i class="fas fa-users"></i>
+                        Mis Pacientes
+                    </a>
+                    <button onclick="togglePerfilSection()" class="action-btn" style="cursor: pointer;">
+                        <i class="fas fa-user-circle"></i>
+                        Mi Perfil
+                    </button>
+                    
+                </div>
+            </div>
+
+            <!-- Sección de Configuración de Perfil (Oculta por defecto) -->
+            <div id="perfilSection" style="display: none; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: #333; margin: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-user-circle" style="color: #667eea;"></i>
+                        Mi Perfil
+                    </h3>
+                    <button onclick="togglePerfilSection()" style="background: #f0f0f0; color: #333; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
+                </div>
+                
+                <form id="formPerfil" onsubmit="guardarPerfil(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Nombres: *</label>
+                        <input type="text" id="perfilNombres" th:value="${medico?.nombres}" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Apellidos: *</label>
+                        <input type="text" id="perfilApellidos" th:value="${medico?.apellidos}" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Email: *</label>
+                        <input type="email" id="perfilEmail" th:value="${medico?.email}" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Teléfono:</label>
+                        <input type="tel" id="perfilTelefono" th:value="${medico?.telefono}" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; gap: 15px; margin-top: 20px;">
+                        <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                        <button type="button" onclick="resetPerfil()" style="background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-undo"></i> Restablecer
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Gestión de Citas con Filtros -->
+            <div id="citasSection" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: #333; margin: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-calendar-check" style="color: #667eea;"></i>
+                        Gestión de Citas
+                    </h3>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <select id="filtroEstado" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                            <option value="">Todos los estados</option>
+                            <option value="PROGRAMADA">Programadas</option>
+                            <option value="CONFIRMADA">Confirmadas</option>
+                            <option value="EN_CURSO">En Curso</option>
+                            <option value="COMPLETADA">Atendidas</option>
+                            <option value="CANCELADA">Canceladas</option>
+                        </select>
+                        <button onclick="filtrarCitas()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Lista de Citas -->
+                <div id="listaCitas">
+                    <div th:if="${#lists.isEmpty(proximasCitas)}" class="empty-state" style="text-align: center; padding: 40px; color: #999;">
+                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No hay citas disponibles</p>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(proximasCitas)}" style="display: grid; gap: 15px;">
+                        <div class="cita-row" th:each="cita : ${proximasCitas}" th:data-estado="${cita.estado}" 
+                             style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; background: #f9f9f9; transition: all 0.3s;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h5 style="margin: 0 0 5px 0; color: #333;" th:text="${cita.paciente.nombres} + ' ' + ${cita.paciente.apellidos}">Paciente</h5>
+                                    <p style="margin: 0; color: #666; font-size: 14px;">
+                                        <i class="fas fa-calendar"></i> <span th:text="${cita.fecha}">Fecha</span> - 
+                                        <i class="fas fa-clock"></i> <span th:text="${cita.hora}">Hora</span>
+                                    </p>
+                                    <p style="margin: 5px 0 0 0; color: #888; font-size: 13px;" th:text="${cita.motivo}">Motivo</p>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 10px; align-items: end;">
+                                    <select th:data-cita-id="${cita.idCita}" class="estado-select" onchange="habilitarBotonActualizar(this)"
+                                            style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                                        <option value="PROGRAMADA" th:selected="${cita.estado == 'PROGRAMADA'}">Programada</option>
+                                        <option value="CONFIRMADA" th:selected="${cita.estado == 'CONFIRMADA'}">Confirmada</option>
+                                        <option value="EN_CURSO" th:selected="${cita.estado == 'EN_CURSO'}">En Curso</option>
+                                        <option value="ATENDIDA" th:selected="${cita.estado == 'ATENDIDA'}">Atendida</option>
+                                        <option value="CANCELADA" th:selected="${cita.estado == 'CANCELADA'}">Cancelada</option>
+                                    </select>
+                                    <button onclick="cambiarEstadoCita(this)" th:data-cita-id="${cita.idCita}" 
+                                            style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">
+                                        <i class="fas fa-save"></i> Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="upcoming-section">
+                <h3>Próximas Citas</h3>
+                <div th:if="${#lists.isEmpty(proximasCitas)}" class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay citas próximas programadas</p>
+                </div>
+                <div th:unless="${#lists.isEmpty(proximasCitas)}" class="appointments-grid">
+                    <div class="appointment-card" th:each="cita : ${proximasCitas}">
+                        <div class="appointment-header">
+                            <div class="appointment-date">
+                                <span class="day" th:text="${cita.fecha != null ? #dates.format(cita.fecha, 'dd') : '--'}">01</span>
+                                <span class="month" th:text="${cita.fecha != null ? #dates.format(cita.fecha, 'MMM') : '---'}">ENE</span>
+                            </div>
+                            <div class="appointment-time">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${cita.hora}">10:00</span>
+                            </div>
+                        </div>
+                        <div class="appointment-body">
+                            <h5 th:text="${cita.paciente.nombres} + ' ' + ${cita.paciente.apellidos}">Nombre Paciente</h5>
+                            <p class="motivo" th:text="${cita.motivo}">Consulta general</p>
+                            <div class="estado-badge">
+                                <span class="badge" th:classappend="'badge-' + ${cita.estado.toLowerCase()}" th:text="${cita.estado}">PROGRAMADA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Asegurarse de que el DOM esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si hay mensajes de error
+            const error = getUrlParameter('error');
+            if (error) {
+                mostrarAlerta(decodeURIComponent(error), 'danger');
+            }
+            
+            // Manejar responsive sidebar
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'd-md-none btn btn-primary position-fixed';
+            toggleBtn.style.cssText = 'top: 1rem; right: 1rem; z-index: 1002;';
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(toggleBtn);
+            
+            toggleBtn.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('show');
+            });
+        });
+        
+        function getUrlParameter(name) {
+            const results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) return null;
+            return decodeURIComponent(results[1]) || 0;
+        }
+        
+        function mostrarAlerta(mensaje, tipo) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${tipo} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            const content = document.querySelector('.content');
+            content.insertBefore(alertDiv, content.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Funciones de horario eliminadas - causaban problemas
+
+        function filtrarCitas() {
+            const filtroEstado = document.getElementById('filtroEstado');
+            const estado = filtroEstado ? filtroEstado.value : '';
+            
+            const citasContainer = document.querySelector('#listaCitas');
+            if (!citasContainer) return;
+            
+            const citas = citasContainer.querySelectorAll('.cita-row');
+            
+            citas.forEach(cita => {
+                const selectEstado = cita.querySelector('.estado-select');
+                const estadoCita = selectEstado ? selectEstado.value : '';
+                
+                if (estado === '' || estadoCita === estado) {
+                    cita.style.display = '';
+                } else {
+                    cita.style.display = 'none';
+                }
+            });
+            
+            mostrarAlerta('Citas filtradas por estado: ' + (estado || 'Todas'), 'info');
+        }
+
+        function habilitarBotonActualizar(selectElement) {
+            const citaRow = selectElement.closest('.cita-row');
+            if (!citaRow) return;
+            
+            const button = citaRow.querySelector('button[onclick="cambiarEstadoCita(this)"]');
+            if (button) {
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+            }
+        }
+
+        function cambiarEstadoCita(button) {
+            const citaRow = button.closest('.cita-row');
+            if (!citaRow) {
+                mostrarAlerta('Error: No se encontró la fila de la cita', 'error');
+                return;
+            }
+            
+            const select = citaRow.querySelector('.estado-select');
+            const citaId = select ? select.getAttribute('th:data-cita-id') : null;
+            const nuevoEstado = select ? select.value : null;
+            
+            if (!citaId || !nuevoEstado) {
+                mostrarAlerta('Error: No se pudo obtener los datos de la cita', 'error');
+                return;
+            }
+            
+            button.disabled = true;
+            button.style.opacity = '0.5';
+            button.style.cursor = 'not-allowed';
+            
+            fetch(`/medico/citas/cambiar-estado/${citaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ estado: nuevoEstado })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarAlerta('Cita actualizada correctamente', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    mostrarAlerta(data.message || 'Error al actualizar la cita', 'error');
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                    button.style.cursor = 'pointer';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión al actualizar la cita', 'error');
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.style.cursor = 'pointer';
+            });
+        }
+
+        // Función eliminarHorario eliminada - causaba problemas
+
+        // Función guardarHorario eliminada - causaba problemas
+
+        function actualizarDiaSeleccionado(selectElement) {
+            const dia = selectElement.value;
+            console.log('Día seleccionado:', dia);
+        }
+
+        
+
+        // ✅ FUNCIÓN CORREGIDA: Mostrar/ocultar perfil (SOLO maneja su sección)
+        function togglePerfilSection() {
+            const perfilSection = document.getElementById('perfilSection');
+            if (perfilSection) {
+                const isVisible = perfilSection.style.display !== 'none';
+                perfilSection.style.display = isVisible ? 'none' : 'block';
+            }
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Mostrar/ocultar citas (SOLO maneja su sección)
+        function toggleCitasSection() {
+            const citasSection = document.getElementById('citasSection');
+            if (citasSection) {
+                const isVisible = citasSection.style.display !== 'none';
+                citasSection.style.display = isVisible ? 'none' : 'block';
+            }
+        }
+
+        function guardarPerfil(event) {
+            if (event) event.preventDefault();
+            
+            const nombres = document.getElementById('perfilNombres').value.trim();
+            const apellidos = document.getElementById('perfilApellidos').value.trim();
+            const email = document.getElementById('perfilEmail').value.trim();
+            const telefono = document.getElementById('perfilTelefono').value.trim();
+            
+            if (!nombres || !apellidos || !email) {
+                mostrarAlerta('Por favor completa los campos obligatorios', 'error');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                mostrarAlerta('Por favor ingresa un email válido', 'error');
+                return;
+            }
+            
+            const submitButton = document.querySelector('#formPerfil button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            
+            const formData = new FormData();
+            formData.append('nombres', nombres);
+            formData.append('apellidos', apellidos);
+            formData.append('email', email);
+            formData.append('telefono', telefono);
+            
+            fetch('/medico/actualizar-perfil', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarAlerta('Perfil actualizado correctamente', 'success');
+                    const userNameElement = document.querySelector('.user-info-top p');
+                    if (userNameElement) {
+                        userNameElement.textContent = nombres + ' ' + apellidos;
+                    }
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    mostrarAlerta('Error: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarAlerta('Error al actualizar el perfil', 'error');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            });
+        }
+
+        function resetPerfil() {
+            if (confirm('¿Estás seguro de que quieres restablecer los cambios?')) {
+                document.getElementById('formPerfil').reset();
+                mostrarAlerta('Formulario restablecido', 'info');
+            }
+        }
+    </script>
+</body>
+</html>

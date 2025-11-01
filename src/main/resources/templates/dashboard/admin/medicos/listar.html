@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Médicos - Gestión de Citas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f7fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .main-wrapper { display: flex; }
+        .sidebar { width: 280px; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; color: white; position: fixed; left: 0; top: 0; overflow-y: auto; }
+        .sidebar-header { text-align: center; margin-bottom: 40px; }
+        .sidebar-header h4 { color: white; font-weight: 700; margin: 0; }
+        .sidebar-header p { color: rgba(255,255,255,0.7); font-size: 12px; margin: 5px 0 0 0; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { margin-bottom: 15px; }
+        .sidebar a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar i { margin-right: 12px; }
+        .logout-link { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .logout-link a { color: rgba(255,255,255,0.9); }
+        .content-area { margin-left: 280px; width: calc(100% - 280px); }
+        .page-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .page-header h1 { margin: 0; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .page-header p { margin: 5px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9); }
+        .page-content { padding: 30px; }
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px; }
+        .search-box { flex: 1; max-width: 400px; }
+        .search-box input { width: 100%; padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
+        .search-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .btn-nuevo { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-nuevo:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); color: white; }
+        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .table { margin: 0; font-size: 14px; }
+        .table thead { background: #f8f9fa; border-bottom: 2px solid #e0e0e0; }
+        .table thead th { color: #333; font-weight: 600; padding: 15px; border: none; }
+        .table tbody td { padding: 15px; border: none; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .table tbody tr:last-child td { border-bottom: none; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-edit { background: #ffa94d; color: white; }
+        .btn-edit:hover { background: #ff922b; transform: translateY(-1px); color: white; }
+        .btn-delete { background: #ff6b6b; color: white; }
+        .btn-delete:hover { background: #fa5252; transform: translateY(-1px); }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state i { font-size: 48px; margin-bottom: 20px; opacity: 0.5; }
+        .alert { border-radius: 8px; border: none; margin-bottom: 20px; }
+        .modal-content { border-radius: 15px; border: none; }
+        .modal-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 15px 15px 0 0; }
+        .modal-header .btn-close { filter: brightness(0) invert(1); }
+        .modal-title { color: white; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4>🏥 Gestión Citas</h4>
+                <p>Bienvenido al sistema</p>
+            </div>
+            <ul>
+                <li><a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="/admin/usuarios"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a href="/admin/medicos" class="active"><i class="fas fa-user-md"></i> Médicos</a></li>
+                <li><a href="/admin/pacientes"><i class="fas fa-hospital-user"></i> Pacientes</a></li>
+                <li><a href="/admin/especialidades"><i class="fas fa-stethoscope"></i> Especialidades</a></li>
+                <li><a href="/admin/citas"><i class="fas fa-calendar-check"></i> Citas</a></li>
+                <li><a href="/admin/reportes"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                <li class="logout-link"><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-area">
+            <div class="page-header">
+                <h1><i class="fas fa-user-md"></i> Gestión de Médicos</h1>
+                <p>Administra todos los médicos del sistema</p>
+            </div>
+
+            <div class="page-content">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="action-bar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar médico por nombre, especialidad...">
+                    </div>
+                    <button class="btn-nuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoMedico">
+                        <i class="fas fa-plus"></i> Nuevo Médico
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" th:if="${!#lists.isEmpty(medicos)}">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-user"></i> Nombres</th>
+                                <th><i class="fas fa-user"></i> Apellidos</th>
+                                <th><i class="fas fa-id-card"></i> DNI</th>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <th><i class="fas fa-stethoscope"></i> Especialidad</th>
+                                <th><i class="fas fa-toggle-on"></i> Estado</th>
+                                <th><i class="fas fa-cog"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="medico : ${medicos}">
+                                <td th:text="${medico.idMedico}"></td>
+                                <td th:text="${medico.nombres}"></td>
+                                <td th:text="${medico.apellidos}"></td>
+                                <td th:text="${medico.dni}"></td>
+                                <td th:text="${medico.email}"></td>
+                                <td>
+                                    <span class="badge bg-info" th:text="${medico.especialidad != null ? medico.especialidad.nombre : 'N/A'}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${medico.activo == 1}" class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Activo
+                                    </span>
+                                    <span th:if="${medico.activo == 0 || medico.activo == null}" class="badge bg-danger">
+                                        <i class="fas fa-times-circle"></i> Inactivo
+                                    </span>
+                                </td>
+                                <td>
+    <div class="action-buttons">
+        <!-- ✅ BOTÓN CAMBIAR ESTADO -->
+        <button th:if="${medico.activo == 1}" 
+                class="btn-sm btn-cambiar-estado" 
+                style="background: #dc3545; color: white;"
+                title="Desactivar médico"
+                th:data-id="${medico.idMedico}"
+                th:data-estado="0"
+                th:data-nombre="${medico.nombres + ' ' + medico.apellidos}">
+            <i class="fas fa-toggle-off"></i> Desactivar
+        </button>
+        
+        <button th:if="${medico.activo == 0 || medico.activo == null}" 
+                class="btn-sm btn-cambiar-estado" 
+                style="background: #28a745; color: white;"
+                title="Activar médico"
+                th:data-id="${medico.idMedico}"
+                th:data-estado="1"
+                th:data-nombre="${medico.nombres + ' ' + medico.apellidos}">
+            <i class="fas fa-toggle-on"></i> Activar
+        </button>
+        
+        <!-- ✅ BOTÓN EDITAR - Abre modal -->
+        <button class="btn-sm btn-edit btn-editar" 
+                title="Editar médico"
+                th:data-id="${medico.idMedico}"
+                th:data-nombres="${medico.nombres}"
+                th:data-apellidos="${medico.apellidos}"
+                th:data-dni="${medico.dni}"
+                th:data-email="${medico.email}"
+                th:data-telefono="${medico.telefono}"
+                th:data-direccion="${medico.direccion}"
+                th:data-especialidad="${medico.especialidad != null ? medico.especialidad.idEspecialidad : ''}">
+            <i class="fas fa-edit"></i> Editar
+        </button>
+        
+        <!-- ✅ BOTÓN ELIMINAR - Abre modal -->
+        <button class="btn-sm btn-delete btn-eliminar" 
+                title="Eliminar médico"
+                th:data-id="${medico.idMedico}"
+                th:data-nombre="${medico.nombres + ' ' + medico.apellidos}">
+            <i class="fas fa-trash"></i> Eliminar
+        </button>
+    </div>
+</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${#lists.isEmpty(medicos)}" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h4>No hay médicos</h4>
+                        <p>Comienza agregando tu primer médico al sistema</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO MÉDICO -->
+    <div class="modal fade" id="modalNuevoMedico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-md"></i> Registrar Nuevo Médico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevoMedico" th:action="@{/admin/medicos/guardar}" method="post" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" class="form-control" name="nombres" placeholder="Juan" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" class="form-control" name="apellidos" placeholder="Pérez García" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                                <input type="text" class="form-control" name="dni" placeholder="12345678" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" name="email" placeholder="medico@ejemplo.com" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                                <input type="tel" class="form-control" name="telefono" placeholder="+51 999 999 999" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-stethoscope"></i> Especialidad *</label>
+                                <select class="form-select" name="especialidad" required>
+                                    <option value="">-- Seleccionar --</option>
+                                    <option th:each="esp : ${especialidades}" th:value="${esp.idEspecialidad}" th:text="${esp.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <input type="text" class="form-control" name="direccion" placeholder="Calle Principal 123, Lima">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="formNuevoMedico" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">Registrar Médico</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ✅ MODAL EDITAR MÉDICO -->
+<div class="modal fade" id="modalEditarMedico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-edit"></i> Editar Médico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formEditarMedico" th:action="@{/admin/medicos/actualizar}" method="post" novalidate>
+                    <input type="hidden" id="editIdMedico" name="idMedico">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                            <input type="text" class="form-control" id="editNombres" name="nombres" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                            <input type="text" class="form-control" id="editApellidos" name="apellidos" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                            <input type="text" class="form-control" id="editDni" name="dni" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                            <input type="tel" class="form-control" id="editTelefono" name="telefono" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-stethoscope"></i> Especialidad *</label>
+                            <select class="form-select" id="editEspecialidad" name="especialidad" required>
+                                <option value="">-- Seleccionar --</option>
+                                <option th:each="esp : ${especialidades}" th:value="${esp.idEspecialidad}" th:text="${esp.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                            <input type="text" class="form-control" id="editDireccion" name="direccion">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formEditarMedico" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+    <!-- ✅ MODAL ELIMINAR MÉDICO -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar al médico?</p>
+                    <p class="fw-bold" id="nombreMedico"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formEliminar" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ✅ JAVASCRIPT FUNCIONAL -->
+    <script>
+    // 🔍 BÚSQUEDA EN TIEMPO REAL
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.table tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+    });
+
+    // ✏️ EDITAR MÉDICO
+    const modalEditar = new bootstrap.Modal(document.getElementById('modalEditarMedico'));
+    
+    document.querySelectorAll('.btn-editar').forEach(button => {
+        button.addEventListener('click', function() {
+            // Obtener los datos del médico
+            const id = this.dataset.id;
+            const nombres = this.dataset.nombres;
+            const apellidos = this.dataset.apellidos;
+            const dni = this.dataset.dni;
+            const email = this.dataset.email;
+            const telefono = this.dataset.telefono;
+            const direccion = this.dataset.direccion;
+            const especialidad = this.dataset.especialidad;
+            
+            // Rellenar el formulario del modal
+            document.getElementById('editIdMedico').value = id;
+            document.getElementById('editNombres').value = nombres;
+            document.getElementById('editApellidos').value = apellidos;
+            document.getElementById('editDni').value = dni;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editTelefono').value = telefono;
+            document.getElementById('editDireccion').value = direccion;
+            document.getElementById('editEspecialidad').value = especialidad;
+            
+            // Mostrar el modal
+            modalEditar.show();
+        });
+    });
+
+    // 🗑️ ELIMINAR MÉDICO
+    const modalEliminar = new bootstrap.Modal(document.getElementById('modalEliminar'));
+    const formEliminar = document.getElementById('formEliminar');
+    const nombreMedico = document.getElementById('nombreMedico');
+    
+    document.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+            
+            nombreMedico.textContent = nombre;
+            formEliminar.action = `/admin/medicos/eliminar/${id}`;
+            
+            modalEliminar.show();
+        });
+    });
+
+    // 🔄 CAMBIAR ESTADO MÉDICO (ACTIVO/INACTIVO)
+    document.querySelectorAll('.btn-cambiar-estado').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nuevoEstado = this.dataset.estado;
+            const nombre = this.dataset.nombre;
+            const estadoTexto = nuevoEstado === '1' ? 'activar' : 'desactivar';
+            
+            if (confirm(`¿Estás seguro de que deseas ${estadoTexto} al médico ${nombre}?`)) {
+                // Deshabilitar el botón mientras se procesa
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+                
+                fetch('/admin/medicos/cambiar-estado', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        idMedico: id,
+                        nuevoEstado: nuevoEstado
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar mensaje de éxito
+                        showToast('success', data.message);
+                        
+                        // Recargar la página para actualizar el estado visual
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showToast('error', data.message || 'Error al cambiar el estado');
+                        // Reactivar el botón
+                        this.disabled = false;
+                        const iconClass = nuevoEstado === '1' ? 'fa-toggle-on' : 'fa-toggle-off';
+                        const texto = nuevoEstado === '1' ? 'Activar' : 'Desactivar';
+                        this.innerHTML = `<i class="fas ${iconClass}"></i> ${texto}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('error', 'Error al procesar la solicitud');
+                    // Reactivar el botón
+                    this.disabled = false;
+                    const iconClass = nuevoEstado === '1' ? 'fa-toggle-on' : 'fa-toggle-off';
+                    const texto = nuevoEstado === '1' ? 'Activar' : 'Desactivar';
+                    this.innerHTML = `<i class="fas ${iconClass}"></i> ${texto}`;
+                });
+            }
+        });
+    });
+
+    // 📢 FUNCIÓN PARA MOSTRAR TOASTS
+    function showToast(type, message) {
+        // Crear el toast dinámicamente
+        const toastHtml = `
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+                        <strong class="me-auto">${type === 'success' ? 'Éxito' : 'Error'}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Agregar el toast al DOM
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        
+        // Auto-remover después de 3 segundos
+        setTimeout(() => {
+            const toast = document.querySelector('.toast-container:last-child');
+            if (toast) {
+                toast.remove();
+            }
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>

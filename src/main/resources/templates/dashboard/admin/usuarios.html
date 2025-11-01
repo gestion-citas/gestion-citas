@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid p-4">
+        <h2 class="mb-4"><i class="fas fa-users"></i> Gestión de Usuarios</h2>
+
+        <!-- Tabla de Usuarios -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usr : ${usuarios}">
+                        <td th:text="${usr.idUsuario}"></td>
+                        <td th:text="${usr.username}"></td>
+                        <td th:text="${usr.email}"></td>
+                        <td>
+                            <span th:if="${usr.role == 'ADMIN'}" class="badge bg-danger">Admin</span>
+                            <span th:if="${usr.role == 'MEDICO'}" class="badge bg-primary">Médico</span>
+                            <span th:if="${usr.role == 'RECEPCIONISTA'}" class="badge bg-info">Recepcionista</span>
+                            <span th:if="${usr.role == 'PACIENTE'}" class="badge bg-success">Paciente</span>
+                        </td>
+                        <td th:text="${usr.nombres}"></td>
+                        <td>
+                            <span th:if="${usr.activo}" class="badge bg-success">Activo</span>
+                            <span th:unless="${usr.activo}" class="badge bg-secondary">Inactivo</span>
+                        </td>
+                        <td>
+                            <!-- ✅ BOTÓN EDITAR - LINK DIRECTO -->
+                            <a th:href="@{/admin/usuarios/editar/{id}(id=${usr.idUsuario})}" 
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            
+                            <!-- ✅ BOTÓN ELIMINAR - FORMULARIO INLINE -->
+                            <form th:action="@{/admin/usuarios/eliminar/{id}(id=${usr.idUsuario})}" 
+                                  method="post" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('¿Eliminar este usuario?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

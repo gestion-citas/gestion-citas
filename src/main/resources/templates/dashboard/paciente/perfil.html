@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Gestión de Citas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sidebar-brand i {
+            font-size: 28px;
+        }
+
+        .sidebar-text {
+            font-size: 12px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 160px;
+            width: calc(100% - 160px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .navbar-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-title p {
+            font-size: 13px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-info-top {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .user-info-top p {
+            margin: 0;
+        }
+
+        .content {
+            padding: 40px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 3px solid white;
+        }
+
+        .profile-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .profile-header .role {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+
+        .profile-body {
+            padding: 30px;
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row i {
+            font-size: 18px;
+            color: #667eea;
+            width: 25px;
+            text-align: center;
+        }
+
+        .info-row .label {
+            font-weight: 600;
+            color: #333;
+            min-width: 100px;
+            font-size: 13px;
+        }
+
+        .info-row .value {
+            color: #666;
+            font-size: 13px;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .btn-section {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .sidebar-nav a span {
+                display: none;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .navbar-user {
+                justify-content: center;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .profile-card {
+                max-width: 100%;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <ul class="sidebar-nav">
+            <li>
+                <a href="/paciente/dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/citas">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Mis Citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/registrar-cita">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nueva Cita</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/perfil" class="active">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+            <li style="margin-top: 30px;">
+                <a href="/auth/logout" style="color: rgba(255, 255, 255, 0.6);">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="navbar-title">
+                <div>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div>
+                    <h1>Mi Perfil</h1>
+                    <p>Información personal</p>
+                </div>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info-top">
+                    <p th:text="${nombrePaciente}">Nombre Paciente</p>
+                    <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Paciente</p>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="profile-card">
+                <!-- Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 th:text="${paciente.nombres} + ' ' + ${paciente.apellidos}">Nombre Paciente</h2>
+                    <p class="role">Paciente</p>
+                </div>
+
+                <!-- Body -->
+                <div class="profile-body">
+                    <!-- Personal Information -->
+                    <div class="info-section">
+                        <h4><i class="fas fa-id-card"></i> Información Personal</h4>
+                        <div class="info-row">
+                            <i class="fas fa-file"></i>
+                            <span class="label">DNI:</span>
+                            <span class="value" th:text="${paciente.dni}">12345678</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-venus-mars"></i>
+                            <span class="label">Género:</span>
+                            <span class="value" th:text="${paciente.genero != null ? paciente.genero : 'No especificado'}">Masculino</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span class="label">Nacimiento:</span>
+                           <span class="value" th:text="${paciente.fechaNacimiento != null ? paciente.fechaNacimiento : 'No especificada'}">01/01/1990</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="info-section">
+                        <h4><i class="fas fa-phone"></i> Contacto</h4>
+                        <div class="info-row">
+                            <i class="fas fa-envelope"></i>
+                            <span class="label">Email:</span>
+                            <span class="value" th:text="${paciente.email}">correo@example.com</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-phone"></i>
+                            <span class="label">Teléfono:</span>
+                            <span class="value" th:text="${paciente.telefono}">+51 999 999 999</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span class="label">Dirección:</span>
+                            <span class="value" th:text="${paciente.direccion}">Dirección</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="btn-section">
+                        <button class="btn-edit" type="button" data-bs-toggle="modal" data-bs-target="#editModal">
+                            <i class="fas fa-edit"></i> Editar Perfil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Perfil -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <h5 class="modal-title" id="editModalLabel" style="color: white; font-weight: 700;">
+                        <i class="fas fa-edit"></i> Editar Información
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600; color: #333;">Nombres</label>
+                            <input type="text" class="form-control" id="nombresInput" th:value="${paciente.nombres}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600; color: #333;">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidosInput" th:value="${paciente.apellidos}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600; color: #333;">Email</label>
+                            <input type="email" class="form-control" id="emailInput" th:value="${paciente.email}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600; color: #333;">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefonoInput" th:value="${paciente.telefono}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #f0f0f0;">
+                    <button type="button" class="btn" style="background: #f0f0f0; color: #333;" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" onclick="guardarPerfil()">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" style="position: fixed; bottom: -100px; right: 30px; background: linear-gradient(135deg, #00c853 0%, #00a840 100%); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 200, 83, 0.3); display: flex; align-items: center; gap: 15px; z-index: 9999; transition: bottom 0.3s ease-in-out; max-width: 400px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <p style="font-weight: 700; font-size: 14px; margin: 0;">✓ Éxito</p>
+                <p class="toast-message" style="font-weight: 400; font-size: 13px; margin: 0; opacity: 0.95;">Perfil actualizado correctamente</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" style="position: fixed; bottom: -100px; right: 30px; background: linear-gradient(135deg, #ff1744 0%, #d50000 100%); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 8px 25px rgba(255, 23, 68, 0.3); display: flex; align-items: center; gap: 15px; z-index: 9999; transition: bottom 0.3s ease-in-out; max-width: 400px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-exclamation-circle" style="font-size: 24px;"></i>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <p style="font-weight: 700; font-size: 14px; margin: 0;">Error</p>
+                <p class="toast-message" style="font-weight: 400; font-size: 13px; margin: 0; opacity: 0.95;">Error al actualizar el perfil</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(id, message) {
+            const toast = document.getElementById(id);
+            if (toast) {
+                toast.querySelector('.toast-message').textContent = message;
+                toast.style.bottom = '30px';
+                setTimeout(() => {
+                    toast.style.bottom = '-100px';
+                }, 3000);
+            }
+        }
+
+        function guardarPerfil() {
+            const nombres = document.getElementById('nombresInput').value;
+            const apellidos = document.getElementById('apellidosInput').value;
+            const email = document.getElementById('emailInput').value;
+            const telefono = document.getElementById('telefonoInput').value;
+
+            fetch('/paciente/actualizar-perfil', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    nombres: nombres,
+                    apellidos: apellidos,
+                    email: email,
+                    telefono: telefono
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                    modal.hide();
+                    
+                    // Mostrar toast de éxito
+                    showToast('successToast', 'Perfil actualizado correctamente');
+                    
+                    // Recargar página después de 500ms
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    showToast('errorToast', data.message || 'Error al actualizar el perfil');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('errorToast', 'Error al procesar la solicitud');
+            });
+        }
+
+        // Marcar enlace activo en el sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

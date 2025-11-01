@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="ReporteRendimientoMedicos" pageWidth="595" pageHeight="842" columnWidth="555"
+    leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    
+    <parameter name="fechaInicio" class="java.lang.String"/>
+    <parameter name="fechaFin" class="java.lang.String"/>
+    
+    <field name="nombreMedico" class="java.lang.String"/>
+    <field name="especialidad" class="java.lang.String"/>
+    <field name="totalCitas" class="java.lang.Integer"/>
+    <field name="citasCompletadas" class="java.lang.Long"/>
+    <field name="citasCanceladas" class="java.lang.Long"/>
+    
+    <variable name="porcentajeCompletadas" class="java.lang.Double">
+        <variableExpression>
+            $F{totalCitas} > 0 ? ($F{citasCompletadas}.doubleValue() / $F{totalCitas}.doubleValue()) * 100 : 0
+        </variableExpression>
+    </variable>
+    
+    <title>
+        <band height="79" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reporte de Rendimiento de Médicos]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="40" width="555" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA["Período: " + $P{fechaInicio} + " - " + $P{fechaFin}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="150" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Médico]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="150" y="0" width="100" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Especialidad]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="250" y="0" width="80" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Citas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="330" y="0" width="80" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Completadas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="410" y="0" width="80" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Canceladas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="490" y="0" width="65" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[% Éxito]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="150" height="20"/>
+                <textFieldExpression><![CDATA[$F{nombreMedico}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="150" y="0" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$F{especialidad}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="250" y="0" width="80" height="20"/>
+                <textFieldExpression><![CDATA[$F{totalCitas}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="330" y="0" width="80" height="20"/>
+                <textFieldExpression><![CDATA[$F{citasCompletadas}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="410" y="0" width="80" height="20"/>
+                <textFieldExpression><![CDATA[$F{citasCanceladas}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00'%'">
+                <reportElement x="490" y="0" width="65" height="20"/>
+                <textFieldExpression><![CDATA[$V{porcentajeCompletadas}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <noData>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="50"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[No se encontraron datos de rendimiento de médicos para el período seleccionado]]></text>
+            </staticText>
+        </band>
+    </noData>
+
+    <pageFooter>
+        <band height="54" splitType="Stretch">
+            <textField>
+                <reportElement x="455" y="34" width="100" height="20"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="34" width="250" height="20"/>
+                <text><![CDATA[Sistema de Gestión de Citas Médicas]]></text>
+            </staticText>
+        </band>
+    </pageFooter>
+</jasperReport>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="EstadisticasMensuales" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail">
+    
+    <parameter name="mes" class="java.lang.Integer"/>
+    <parameter name="año" class="java.lang.Integer"/>
+    <parameter name="totalCitas" class="java.lang.Long"/>
+    <parameter name="citasCompletadas" class="java.lang.Long"/>
+    <parameter name="citasCanceladas" class="java.lang.Long"/>
+    
+    <field name="fecha" class="java.time.LocalDate"/>
+    <field name="estado" class="java.lang.String"/>
+    <field name="medico.especialidad" class="java.lang.String"/>
+    
+    <variable name="CitasPorDia" class="java.lang.Integer" resetType="Group" resetGroup="FechaGroup" calculation="Count">
+        <variableExpression><![CDATA[Boolean.TRUE]]></variableExpression>
+        <initialValueExpression><![CDATA[0]]></initialValueExpression>
+    </variable>
+    
+    <group name="FechaGroup">
+        <groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+    </group>
+    
+    <title>
+        <band height="120">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Estadísticas Mensuales de Citas]]></text>
+            </staticText>
+            
+            <textField>
+                <reportElement x="0" y="40" width="555" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA["Mes: " + $P{mes} + " Año: " + $P{año}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Resumen General -->
+            <textField>
+                <reportElement x="50" y="70" width="150" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total de Citas: " + $P{totalCitas}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="220" y="70" width="150" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Completadas: " + $P{citasCompletadas}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="390" y="70" width="150" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Canceladas: " + $P{citasCanceladas}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="20">
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20"/>
+                <text><![CDATA[Fecha]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="100" y="0" width="200" height="20"/>
+                <text><![CDATA[Especialidad]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="300" y="0" width="100" height="20"/>
+                <text><![CDATA[Estado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="0" width="155" height="20"/>
+                <text><![CDATA[Citas del Día]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="100" y="0" width="200" height="20"/>
+                <textFieldExpression><![CDATA[$F{medico.especialidad}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="300" y="0" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="400" y="0" width="155" height="20"/>
+                <textFieldExpression><![CDATA[$V{CitasPorDia}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <pageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="455" y="0" width="100" height="30"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

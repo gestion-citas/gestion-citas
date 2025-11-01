@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - Gestión de Citas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+    <style>
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px 15px 0 0;
+        }
+        .modal-header .modal-title {
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .modal-header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin: 0;
+            margin-top: 5px;
+        }
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .modal-footer {
+            border-top: 1px solid #e0e0e0;
+        }
+        .btn-modal-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            border: none;
+        }
+        .btn-modal-submit:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex;">
+       <!-- Sidebar -->
+<nav class="sidebar" style="width: 280px; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; color: white; position: fixed; left: 0; top: 0; overflow-y: auto;">
+
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="margin-bottom: 15px;">
+            <a href="#" style="color: white; text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1);">
+                <i class="fas fa-chart-line" style="margin-right: 12px;"></i> Dashboard
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/usuarios" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-users" style="margin-right: 12px;"></i> Usuarios
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/medicos" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-user-md" style="margin-right: 12px;"></i> Médicos
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/pacientes" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-hospital-user" style="margin-right: 12px;"></i> Pacientes
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/especialidades" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-stethoscope" style="margin-right: 12px;"></i> Especialidades
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/citas" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-calendar-check" style="margin-right: 12px;"></i> Citas
+            </a>
+        </li>
+        <li style="margin-bottom: 15px;">
+            <a href="/admin/reportes" style="color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-file-pdf" style="margin-right: 12px;"></i> Reportes
+            </a>
+        </li>
+        <li style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+            <a href="/auth/logout" style="color: rgba(255,255,255,0.9); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s;">
+                <i class="fas fa-sign-out-alt" style="margin-right: 12px;"></i> Cerrar Sesión
+            </a>
+        </li>
+
+    </ul>
+</nav>
+
+
+        <!-- Main Content -->
+        <div style="margin-left: 280px; width: calc(100% - 280px);">
+            <!-- Header -->
+            <header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1 style="margin: 0; font-size: 28px; font-weight: 700;">📊 Panel de Administrador</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9);">Bienvenido al sistema de gestión de citas médicas</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fas fa-user-circle" style="font-size: 28px;"></i>
+                        <div>
+                            <p style="margin: 0; font-weight: 600;">Admin</p>
+                            <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.8);">Administrador</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div style="padding: 30px;">
+                <!-- Estadísticas -->
+                <section style="margin-bottom: 40px;">
+                    <h5 style="margin-bottom: 20px; color: #333; font-weight: 700;">📊 Estadísticas del Sistema</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+                                <p style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Usuarios</p>
+                                <h3 style="margin: 0; font-size: 28px; font-weight: 700;" th:text="${totalUsuarios}">0</h3>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Registrados en el sistema</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 32px; margin-bottom: 10px;">🏥</div>
+                                <p style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Médicos</p>
+                                <h3 style="margin: 0; font-size: 28px; font-weight: 700;" th:text="${totalMedicos}">0</h3>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Especialistas disponibles</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 32px; margin-bottom: 10px;">🧑‍⚕️</div>
+                                <p style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Pacientes</p>
+                                <h3 style="margin: 0; font-size: 28px; font-weight: 700;" th:text="${totalPacientes}">0</h3>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Registrados en el sistema</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                                <div style="font-size: 32px; margin-bottom: 10px;">🏷️</div>
+                                <p style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Especialidades</p>
+                                <h3 style="margin: 0; font-size: 28px; font-weight: 700;" th:text="${totalEspecialidades}">0</h3>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Disponibles</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Acciones Rápidas -->
+                <section>
+                    <h5 style="margin-bottom: 20px; color: #333; font-weight: 700;">🚀 Acciones Rápidas</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario" style="padding: 12px; font-weight: 600; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalNuevoMedico" style="padding: 12px; font-weight: 600; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-user-md"></i> Registrar Médico
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalNuevoPaciente" style="padding: 12px; font-weight: 600; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-hospital-user"></i> Registrar Paciente
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalNuevaEspecialidad" style="padding: 12px; font-weight: 600; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-plus"></i> Nueva Especialidad
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- MODAL 1: CREAR NUEVO USUARIO -->
+    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="modalNuevoUsuarioLabel">
+                            <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
+                        </h5>
+                        <p>Completa el formulario para registrar un nuevo usuario</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevoUsuario" th:action="@{/admin/usuarios/guardar}" method="post" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_username" class="form-label"><i class="fas fa-user"></i> Usuario *</label>
+                                <input type="text" class="form-control" id="usuario_username" name="username" placeholder="ejemplo_user" required>
+                                <small class="text-danger d-none" id="errorUsuarioUsername"></small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_email" class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" id="usuario_email" name="email" placeholder="usuario@ejemplo.com" required>
+                                <small class="text-danger d-none" id="errorUsuarioEmail"></small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_nombres" class="form-label"><i class="fas fa-user"></i> Nombres</label>
+                                <input type="text" class="form-control" id="usuario_nombres" name="nombres" placeholder="Juan">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_apellidos" class="form-label"><i class="fas fa-user"></i> Apellidos</label>
+                                <input type="text" class="form-control" id="usuario_apellidos" name="apellidos" placeholder="Pérez García">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_password" class="form-label"><i class="fas fa-lock"></i> Contraseña *</label>
+                                <input type="password" class="form-control" id="usuario_password" name="password" placeholder="••••••••" required>
+                                <small class="text-danger d-none" id="errorUsuarioPassword"></small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_role" class="form-label"><i class="fas fa-shield"></i> Rol *</label>
+                                <select class="form-select" id="usuario_role" name="role" required>
+                                    <option value="">-- Seleccionar rol --</option>
+                                    <option value="ADMIN">👑 Administrador</option>
+                                    <option value="MEDICO">🏥 Médico</option>
+                                    <option value="PACIENTE">👤 Paciente</option>
+                                    <option value="RECEPCIONISTA">📞 Recepcionista</option>
+                                </select>
+                                <small class="text-danger d-none" id="errorUsuarioRole"></small>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="usuario_activo" name="activo" value="true" checked>
+                                    <label class="form-check-label" for="usuario_activo">✅ Usuario Activo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" form="formNuevoUsuario" class="btn btn-modal-submit"><i class="fas fa-save"></i> Crear Usuario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CREAR NUEVO MÉDICO -->
+    <div class="modal fade" id="modalNuevoMedico" tabindex="-1" aria-labelledby="modalNuevoMedicoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="modalNuevoMedicoLabel">
+                            <i class="fas fa-user-md"></i> Registrar Nuevo Médico
+                        </h5>
+                        <p>Completa el formulario para registrar un nuevo médico</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevoMedico" th:action="@{/admin/medicos/guardar}" method="post" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_nombres" class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" class="form-control" id="medico_nombres" name="nombres" placeholder="Juan" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_apellidos" class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" class="form-control" id="medico_apellidos" name="apellidos" placeholder="Pérez García" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_dni" class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                                <input type="text" class="form-control" id="medico_dni" name="dni" placeholder="12345678" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_email" class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" id="medico_email" name="email" placeholder="medico@ejemplo.com" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_telefono" class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                                <input type="tel" class="form-control" id="medico_telefono" name="telefono" placeholder="+51 999 999 999" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="medico_especialidad" class="form-label"><i class="fas fa-stethoscope"></i> Especialidad *</label>
+                                <select class="form-select" id="medico_especialidad" name="especialidad" required>
+                                    <option value="">-- Seleccionar especialidad --</option>
+                                    <option th:each="esp : ${especialidades}" th:value="${esp.idEspecialidad}" th:text="${esp.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="medico_direccion" class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <input type="text" class="form-control" id="medico_direccion" name="direccion" placeholder="Calle Principal 123, Lima">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" form="formNuevoMedico" class="btn btn-modal-submit"><i class="fas fa-save"></i> Registrar Médico</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CREAR NUEVO PACIENTE -->
+    <div class="modal fade" id="modalNuevoPaciente" tabindex="-1" aria-labelledby="modalNuevoPacienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="modalNuevoPacienteLabel">
+                            <i class="fas fa-hospital-user"></i> Registrar Nuevo Paciente
+                        </h5>
+                        <p>Completa el formulario para registrar un nuevo paciente</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevoPaciente" th:action="@{/admin/pacientes/guardar}" method="post" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_nombres" class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" class="form-control" id="paciente_nombres" name="nombres" placeholder="Juan" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_apellidos" class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" class="form-control" id="paciente_apellidos" name="apellidos" placeholder="Pérez García" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_dni" class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                                <input type="text" class="form-control" id="paciente_dni" name="dni" placeholder="12345678" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_email" class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" id="paciente_email" name="email" placeholder="paciente@ejemplo.com" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_telefono" class="form-label"><i class="fas fa-phone"></i> Teléfono</label>
+                                <input type="tel" class="form-control" id="paciente_telefono" name="telefono" placeholder="+51 999 999 999">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_fechaNacimiento" class="form-label"><i class="fas fa-calendar"></i> Fecha Nacimiento</label>
+                                <input type="date" class="form-control" id="paciente_fechaNacimiento" name="fechaNacimiento">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_genero" class="form-label"><i class="fas fa-venus-mars"></i> Género</label>
+                                <select class="form-select" id="paciente_genero" name="genero">
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="O">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="paciente_estadoCivil" class="form-label"><i class="fas fa-ring"></i> Estado Civil</label>
+                                <select class="form-select" id="paciente_estadoCivil" name="estadoCivil">
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="Soltero">Soltero</option>
+                                    <option value="Casado">Casado</option>
+                                    <option value="Divorciado">Divorciado</option>
+                                    <option value="Viudo">Viudo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="paciente_direccion" class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <input type="text" class="form-control" id="paciente_direccion" name="direccion" placeholder="Calle Principal 123, Lima">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" form="formNuevoPaciente" class="btn btn-modal-submit"><i class="fas fa-save"></i> Registrar Paciente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CREAR NUEVA ESPECIALIDAD -->
+    <div class="modal fade" id="modalNuevaEspecialidad" tabindex="-1" aria-labelledby="modalNuevaEspecialidadLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="modalNuevaEspecialidadLabel">
+                            <i class="fas fa-stethoscope"></i> Crear Nueva Especialidad
+                        </h5>
+                        <p>Completa el formulario para registrar una nueva especialidad</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevaEspecialidad" th:action="@{/admin/especialidades/guardar}" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="especialidad_nombre" class="form-label"><i class="fas fa-stethoscope"></i> Nombre de Especialidad *</label>
+                            <input type="text" class="form-control" id="especialidad_nombre" name="nombre" placeholder="Ej: Cardiología" required>
+                            <small class="text-danger d-none" id="errorEspecialidadNombre"></small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="especialidad_descripcion" class="form-label"><i class="fas fa-align-left"></i> Descripción</label>
+                            <textarea class="form-control" id="especialidad_descripcion" name="descripcion" rows="3" placeholder="Describe brevemente esta especialidad..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" form="formNuevaEspecialidad" class="btn btn-modal-submit"><i class="fas fa-save"></i> Crear Especialidad</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('formNuevoUsuario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('usuario_username').value.trim();
+            const email = document.getElementById('usuario_email').value.trim();
+            const password = document.getElementById('usuario_password').value.trim();
+            const role = document.getElementById('usuario_role').value;
+            
+            let isValid = true;
+            
+            if (!username) {
+                document.getElementById('errorUsuarioUsername').classList.remove('d-none');
+                document.getElementById('errorUsuarioUsername').textContent = 'El usuario es requerido';
+                isValid = false;
+            }
+            if (!email) {
+                document.getElementById('errorUsuarioEmail').classList.remove('d-none');
+                document.getElementById('errorUsuarioEmail').textContent = 'El email es requerido';
+                isValid = false;
+            }
+            if (!password) {
+                document.getElementById('errorUsuarioPassword').classList.remove('d-none');
+                document.getElementById('errorUsuarioPassword').textContent = 'La contraseña es requerida';
+                isValid = false;
+            }
+            if (!role) {
+                document.getElementById('errorUsuarioRole').classList.remove('d-none');
+                document.getElementById('errorUsuarioRole').textContent = 'El rol es requerido';
+                isValid = false;
+            }
+            
+            if (isValid) this.submit();
+        });
+
+        document.getElementById('usuario_username').addEventListener('input', function() {
+            document.getElementById('errorUsuarioUsername').classList.add('d-none');
+        });
+        document.getElementById('usuario_email').addEventListener('input', function() {
+            document.getElementById('errorUsuarioEmail').classList.add('d-none');
+        });
+        document.getElementById('usuario_password').addEventListener('input', function() {
+            document.getElementById('errorUsuarioPassword').classList.add('d-none');
+        });
+        document.getElementById('usuario_role').addEventListener('change', function() {
+            document.getElementById('errorUsuarioRole').classList.add('d-none');
+        });
+
+        document.getElementById('formNuevoMedico').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.submit();
+        });
+
+        document.getElementById('formNuevoPaciente').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.submit();
+        });
+
+        document.getElementById('formNuevaEspecialidad').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('especialidad_nombre').value.trim();
+            
+            if (!nombre) {
+                document.getElementById('errorEspecialidadNombre').classList.remove('d-none');
+                document.getElementById('errorEspecialidadNombre').textContent = 'El nombre es requerido';
+                return;
+            }
+            
+            this.submit();
+        });
+
+        document.getElementById('especialidad_nombre').addEventListener('input', function() {
+            document.getElementById('errorEspecialidadNombre').classList.add('d-none');
+        });
+    </script>
+
+
+</body>
+</html>

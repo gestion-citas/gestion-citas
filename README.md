@@ -1,221 +1,437 @@
 # 🏥 Sistema de Gestión de Citas Médicas
 
-Sistema web para la gestión integral de citas médicas, desarrollado con Spring Boot y Thymeleaf.
+Sistema web integral para la gestión de citas médicas desarrollado con Spring Boot, que incluye autenticación por roles, dashboard interactivo, reportes en PDF y una API REST completa.
 
-## 👥 Grupo 12 - Integrantes
+## 👥 Información del Desarrollador
 
-- **Ciro Jelsin Vasquez Malpartida** - Líder de Proyecto
-- **[Nombre]** - Desarrollador Backend
-- **[Nombre]** - Desarrollador Frontend
-- **[Nombre]** - Analista de Base de Datos
-- **[Nombre]** - Documentación y Testing
+- **Desarrollador:** Ciro Jelsin Vasquez Malpartida
+- **Proyecto:** Sistema de Gestión de Citas Médicas
+- **Versión:** 1.0.0
 
 ## 📚 Información Académica
 
 - **Institución:** CIBERTEC
 - **Carrera:** Computación e Informática
 - **Curso:** Lenguaje de Programación II (4691)
-- **Ciclo:** Cuarto
-- **Período:** 2025
+- **Ciclo:** Quinto Ciclo
+- **Período:** 2024-2025
+**Última actualización:** Noviembre 2025
 
 ## 🎯 Descripción del Proyecto
 
-Sistema web desarrollado en Java con Spring Boot que permite gestionar citas médicas, administrar información de médicos y pacientes, y generar reportes. La aplicación implementa arquitectura MVC con persistencia de datos en MySQL.
+Sistema web completo desarrollado en Java con Spring Boot que permite la gestión integral de citas médicas. Incluye administración de médicos, pacientes, especialidades, usuarios con diferentes roles (ADMIN, MEDICO, RECEPCIONISTA), dashboard con estadísticas en tiempo real y generación de reportes en PDF.
 
 ## ✨ Características Principales
 
-- ✅ Gestión de Médicos (CRUD completo)
-- ✅ Gestión de Pacientes (CRUD completo)
-- ✅ Gestión de Citas Médicas (CRUD completo)
-- ✅ Gestión de Especialidades
-- ✅ Gestión de Usuarios con roles
-- ✅ Dashboard con estadísticas
-- ✅ Interfaz responsive con Bootstrap 5
-- ✅ Reportes en PDF con Jasper Reports
-- ✅ API REST documentada
+### 🔐 Sistema de Autenticación y Autorización
+- ✅ Login seguro con Spring Security
+- ✅ Gestión de roles (ADMIN, MEDICO, RECEPCIONISTA)
+- ✅ Autenticación JWT para API REST
+- ✅ Control de acceso por endpoints
+
+### 👨‍⚕️ Gestión de Médicos
+- ✅ CRUD completo de médicos
+- ✅ Asignación de especialidades
+- ✅ Portal específico para médicos
+- ✅ Vista de citas por especialidad
+
+### 👥 Gestión de Pacientes
+- ✅ CRUD completo de pacientes
+- ✅ Registro con datos personales completos
+- ✅ Historial de citas por paciente
+- ✅ Búsqueda y filtros avanzados
+
+### 📅 Gestión de Citas Médicas
+- ✅ CRUD completo de citas
+- ✅ Estados: PROGRAMADA, COMPLETADA, CANCELADA, NO_ASISTIO
+- ✅ Validación de disponibilidad horaria
+- ✅ Gestión de duración de citas
+- ✅ Control de conflictos de horarios
+
+### 🏥 Gestión de Especialidades
+- ✅ CRUD de especialidades médicas
+- ✅ Asignación múltiple a médicos
+- ✅ Reportes por especialidad
+
+### 📊 Dashboard y Estadísticas
+- ✅ Dashboard interactivo con métricas
+- ✅ Estadísticas del día actual
+- ✅ Gráficos de citas por estado
+- ✅ Contadores en tiempo real
+
+### 📄 Sistema de Reportes
+- ✅ Reportes en PDF con JasperReports
+- ✅ Reportes de citas por fecha
+- ✅ Reportes por médico/especialidad
+- ✅ Estadísticas detalladas
+
+### 🌐 API REST
+- ✅ Endpoints completos para todas las entidades
+- ✅ Documentación de API
+- ✅ Autenticación JWT
+- ✅ Manejo de errores estandarizado
 
 ## 🛠️ Tecnologías Utilizadas
 
 ### Backend
-- **Java 17**
-- **Spring Boot 3.5.6**
-- **Spring Data JPA**
-- **Spring Security**
-- **Hibernate**
-- **Maven**
-
-### Frontend
-- **Thymeleaf**
-- **Bootstrap 5.3**
-- **Font Awesome 6.4**
-- **HTML5 / CSS3**
-- **JavaScript**
+- **Java 17** - Lenguaje de programación principal
+- **Spring Boot 3.1.5** - Framework principal
+- **Spring Data JPA** - Persistencia de datos
+- **Spring Security** - Autenticación y autorización
+- **Spring Web** - API REST y controladores web
+- **Hibernate** - ORM
+- **Maven** - Gestión de dependencias
 
 ### Base de Datos
-- **MySQL 8.4.3**
-- **HikariCP** (Connection Pool)
+- **MySQL 8.0** - Base de datos principal
+- **HikariCP** - Pool de conexiones
+- **JPA/Hibernate** - Mapeo objeto-relacional
+
+### Seguridad
+- **Spring Security 6** - Framework de seguridad
+- **JWT (JSON Web Tokens)** - Autenticación stateless
+- **BCrypt** - Encriptación de contraseñas
+
+### Frontend
+- **Thymeleaf** - Motor de plantillas
+- **Bootstrap 5.3** - Framework CSS
+- **Font Awesome 6.4** - Iconografía
+- **HTML5/CSS3** - Markup y estilos
+- **JavaScript** - Interactividad del cliente
 
 ### Reportes
-- **Jasper Reports**
+- **JasperReports 6.20.5** - Generación de reportes PDF
+- **JasperStudio** - Diseño de plantillas
 
-### Deployment
-- **Microsoft Azure App Service**
-- **GitHub Actions** (CI/CD)
+### Utilidades
+- **Lombok** - Reducción de código boilerplate
+- **Spring Boot DevTools** - Desarrollo en caliente
+- **Validation API** - Validación de datos
+
+### Testing
+- **Spring Boot Test** - Testing integrado
+- **JUnit 5** - Framework de pruebas
+- **Mockito** - Mocking para pruebas
+
+## 🏗️ Arquitectura del Sistema
+
+### Patrón MVC (Modelo-Vista-Controlador)
+- **Modelo**: Entidades JPA (Cita, Medico, Paciente, Usuario, Especialidad)
+- **Vista**: Plantillas Thymeleaf con Bootstrap
+- **Controlador**: Controllers REST y Web separados
+
+### Capas de la Aplicación
+```
+┌─────────────────┐
+│   Presentation  │ ← Controllers (Web + REST)
+├─────────────────┤
+│     Service     │ ← Lógica de negocio
+├─────────────────┤
+│   Repository    │ ← Acceso a datos (JPA)
+├─────────────────┤
+│     Entity      │ ← Modelos de dominio
+└─────────────────┘
+```
+
+### Seguridad por Capas
+- **Autenticación**: JWT + Session-based
+- **Autorización**: Roles y permisos granulares
+- **Validación**: Bean Validation en todas las capas
 
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
+- **Java 17** o superior
+- **MySQL 8.0** o superior
+- **Maven 3.6** o superior
+- **IDE** (IntelliJ IDEA, Eclipse, VSCode)
 
-- Java JDK 17 o superior
-- MySQL 8.0 o superior
-- Maven 3.6 o superior
-- IDE (Eclipse, IntelliJ IDEA)
+### Paso 1: Clonar el Repositorio
+```bash
+git clone https://github.com/tuusuario/gestion-citas.git
+cd gestion-citas
+```
 
-### Pasos de Instalación
+### Paso 2: Configurar Base de Datos
+1. Crear base de datos en MySQL:
+```sql
+CREATE DATABASE gestion_citas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-1. **Clonar el repositorio**
-
-git clone https://github.com/[tu-usuario]/gestion-citas-medicas.git
-cd gestion-citas-medicas
-
-
-3. **Configurar application.properties**
-
-Editar `src/main/resources/application.properties`:
-
+2. Configurar credenciales en `application.properties`:
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/gestion_citas
 spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
+spring.datasource.password=tu_password
+```
 
-
-4. **Compilar el proyecto**
-
-mvn clean install
-
-
-5. **Ejecutar la aplicación**
-
+### Paso 3: Ejecutar la Aplicación
+```bash
+# Usando Maven
 mvn spring-boot:run
 
+# O usando el wrapper
+./mvnw spring-boot:run
+```
 
-6. **Acceder a la aplicación**
+### Paso 4: Acceder a la Aplicación
+- **URL Principal**: http://localhost:8080
+- **Usuario Admin**: admin / admin123
+- **Usuario Médico**: medico / medico123
+- **Usuario Recepcionista**: recepcionista / recep123
 
-http://localhost:8080
+## 📁 Estructura del Proyecto
 
+```
+src/
+├── main/
+│   ├── java/com/cibertec/gestioncitas/
+│   │   ├── config/          # Configuraciones (Security, JWT, etc.)
+│   │   ├── controller/      # Controladores Web y REST
+│   │   │   ├── CitaController.java
+│   │   │   ├── CitaRestController.java
+│   │   │   ├── CitaWebController.java
+│   │   │   ├── DashboardController.java
+│   │   │   ├── MedicoController.java
+│   │   │   ├── MedicoRestController.java
+│   │   │   ├── MedicoWebController.java
+│   │   │   ├── PacienteController.java
+│   │   │   ├── PacienteWebController.java
+│   │   │   ├── ReporteController.java
+│   │   │   └── UsuarioController.java
+│   │   ├── entity/          # Entidades JPA
+│   │   │   ├── Cita.java
+│   │   │   ├── Especialidad.java
+│   │   │   ├── Medico.java
+│   │   │   ├── Paciente.java
+│   │   │   └── Usuario.java
+│   │   ├── exception/       # Manejo de excepciones
+│   │   ├── repository/      # Repositorios JPA
+│   │   ├── service/         # Servicios de negocio
+│   │   └── GestionCitasApplication.java
+│   └── resources/
+│       ├── static/          # Recursos estáticos (CSS, JS, imágenes)
+│       │   ├── css/
+│       │   ├── js/
+│       │   └── img/
+│       ├── templates/       # Plantillas Thymeleaf
+│       │   ├── citas/
+│       │   ├── dashboard/
+│       │   ├── medicos/
+│       │   ├── pacientes/
+│       │   ├── especialidades/
+│       │   ├── usuarios/
+│       │   └── fragments/
+│       ├── reportes/        # Plantillas JasperReports
+│       └── application.properties
+└── test/                    # Pruebas unitarias e integración
+```
 
-## 👤 Usuarios por Defecto
+## 🔗 Endpoints de la API REST
 
-| Usuario 	| admin
-| Contraseña 	| admin123
-| Rol		| Administrador
-
-| Usuario 	| recepcion
-| Contraseña 	| recep123
-| Rol		| Recepcionista
-
-| Usuario 	| doctor
-| Contraseña 	| doc123
-| Rol		| Médico
-
-
-## 📊 Modelo de Base de Datos
-
-### Entidades Principales
-
-- **Especialidad**: Especialidades médicas disponibles
-- **Medico**: Información de médicos del sistema
-- **Paciente**: Datos de pacientes registrados
-- **Cita**: Gestión de citas médicas
-- **Usuario**: Control de acceso al sistema
-
-## 🔗 Endpoints API REST
-
-### Especialidades
-- `GET /api/especialidades` - Listar todas
-- `POST /api/especialidades` - Crear nueva
-- `GET /api/especialidades/{id}` - Obtener por ID
-- `PUT /api/especialidades/{id}` - Actualizar
-- `DELETE /api/especialidades/{id}` - Eliminar
+### Autenticación
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Iniciar sesión |
+| POST | `/api/auth/logout` | Cerrar sesión |
 
 ### Médicos
-- `GET /api/medicos` - Listar todos
-- `POST /api/medicos` - Crear nuevo
-- `GET /api/medicos/{id}` - Obtener por ID
-- `PUT /api/medicos/{id}` - Actualizar
-- `DELETE /api/medicos/{id}` - Eliminar
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/medicos` | Listar todos los médicos |
+| GET | `/api/medicos/{id}` | Obtener médico por ID |
+| POST | `/api/medicos` | Crear nuevo médico |
+| PUT | `/api/medicos/{id}` | Actualizar médico |
+| DELETE | `/api/medicos/{id}` | Eliminar médico |
 
 ### Pacientes
-- `GET /api/pacientes` - Listar todos
-- `POST /api/pacientes` - Crear nuevo
-- `GET /api/pacientes/{id}` - Obtener por ID
-- `PUT /api/pacientes/{id}` - Actualizar
-- `DELETE /api/pacientes/{id}` - Eliminar
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/pacientes` | Listar todos los pacientes |
+| GET | `/api/pacientes/{id}` | Obtener paciente por ID |
+| POST | `/api/pacientes` | Crear nuevo paciente |
+| PUT | `/api/pacientes/{id}` | Actualizar paciente |
+| DELETE | `/api/pacientes/{id}` | Eliminar paciente |
 
 ### Citas
-- `GET /api/citas` - Listar todas
-- `POST /api/citas` - Crear nueva
-- `GET /api/citas/{id}` - Obtener por ID
-- `PUT /api/citas/{id}` - Actualizar
-- `DELETE /api/citas/{id}` - Eliminar
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/citas` | Listar todas las citas |
+| GET | `/api/citas/{id}` | Obtener cita por ID |
+| POST | `/api/citas` | Crear nueva cita |
+| PUT | `/api/citas/{id}` | Actualizar cita |
+| DELETE | `/api/citas/{id}` | Eliminar cita |
+| GET | `/api/citas/medico/{id}` | Citas por médico |
+| GET | `/api/citas/paciente/{id}` | Citas por paciente |
 
-## 📝 Reportes Disponibles
+### Especialidades
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/especialidades` | Listar especialidades |
+| GET | `/api/especialidades/{id}` | Obtener especialidad por ID |
+| POST | `/api/especialidades` | Crear especialidad |
+| PUT | `/api/especialidades/{id}` | Actualizar especialidad |
+| DELETE | `/api/especialidades/{id}` | Eliminar especialidad |
 
-1. **Reporte de Citas por Médico**: Listado detallado de citas agrupadas por médico
-2. **Reporte de Citas por Especialidad**: Estadísticas de citas por especialidad médica
+## 📚 Documentación de la API REST
 
-## 🌐 Deployment en Azure
+### 🔑 Autenticación
 
-La aplicación está desplegada en Microsoft Azure App Service:
+#### Login
+```http
+POST /api/auth/login
+```
+| Parámetro   | Tipo       | Descripción                           |
+| :---------- | :--------- | :---------------------------------- |
+| `username`  | `string`   | **Requerido**. Nombre de usuario    |
+| `password`  | `string`   | **Requerido**. Contraseña          |
 
-URL: https://gestion-citas-medicas.azurewebsites.net
+Respuesta exitosa:
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsIn...",
+    "type": "Bearer",
+    "username": "usuario",
+    "roles": ["ROLE_ADMIN"]
+}
+```
 
+### 👨‍⚕️ Endpoints de Médicos
 
-## 🧪 Testing
+#### Obtener todos los médicos
+```http
+GET /api/medicos
+```
+| Header          | Tipo     | Descripción                         |
+| :-------------- | :------- | :--------------------------------- |
+| `Authorization` | `string` | **Requerido**. Bearer {token}      |
 
-Ejecutar tests:
+#### Obtener médico por ID
+```http
+GET /api/medicos/{id}
+```
 
-mvn test
+#### Crear nuevo médico
+```http
+POST /api/medicos
+```
+```json
+{
+    "nombre": "string",
+    "apellido": "string",
+    "dni": "string",
+    "especialidadId": "number",
+    "email": "string",
+    "telefono": "string"
+}
+```
 
+#### Actualizar médico
+```http
+PUT /api/medicos/{id}
+```
 
-## 📄 Documentación Adicional
+#### Eliminar médico
+```http
+DELETE /api/medicos/{id}
+```
 
-- [Manual de Usuario](docs/Manual_Usuario.pdf)
-- [Manual Técnico](docs/Manual_Tecnico.pdf)
-- [Informe Final del Proyecto](docs/Informe_Final.pdf)
+### 📅 Endpoints de Citas
 
-## 🤝 Contribución
+#### Listar citas
+```http
+GET /api/citas
+```
+| Parámetro    | Tipo      | Descripción                          |
+| :----------- | :-------- | :---------------------------------- |
+| `fecha`      | `string`  | Filtrar por fecha (YYYY-MM-DD)      |
+| `estado`     | `string`  | Filtrar por estado                  |
+| `medicoId`   | `number`  | Filtrar por médico                  |
 
-Este es un proyecto académico desarrollado por el Grupo 12 de Cibertec.
+#### Crear cita
+```http
+POST /api/citas
+```
+```json
+{
+    "pacienteId": "number",
+    "medicoId": "number",
+    "fecha": "string (YYYY-MM-DD)",
+    "hora": "string (HH:mm)",
+    "motivo": "string"
+}
+```
 
-### Flujo de Trabajo Git
+#### Actualizar estado de cita
+```http
+PATCH /api/citas/{id}/estado
+```
+```json
+{
+    "estado": "COMPLETADA|CANCELADA|NO_ASISTIO"
+}
+```
 
-1. Crear branch desde `main`:
+### 👥 Endpoints de Pacientes
 
-git checkout -b feature/nombre-funcionalidad
+#### Listar pacientes
+```http
+GET /api/pacientes
+```
 
+#### Buscar paciente por DNI
+```http
+GET /api/pacientes/buscar
+```
+| Parámetro | Tipo     | Descripción                    |
+| :-------- | :------- | :---------------------------- |
+| `dni`     | `string` | DNI del paciente a buscar     |
 
-2. Realizar cambios y commit:
+### 📊 Endpoints de Reportes
 
-git add .
-git commit -m "Descripción del cambio"
+#### Generar reporte de citas
+```http
+GET /api/reportes/citas
+```
+| Parámetro     | Tipo     | Descripción                          |
+| :------------ | :------- | :---------------------------------- |
+| `fechaInicio` | `string` | Fecha inicial (YYYY-MM-DD)          |
+| `fechaFin`    | `string` | Fecha final (YYYY-MM-DD)            |
+| `formato`     | `string` | Formato del reporte (PDF|EXCEL)     |
 
+### ⚡ Códigos de Estado
 
-3. Subir cambios:
+La API utiliza los siguientes códigos de estado HTTP:
 
-git push origin feature/nombre-funcionalidad
+| Código | Descripción                                    |
+| :----- | :--------------------------------------------|
+| 200    | OK - La solicitud se ha completado con éxito |
+| 201    | Created - Recurso creado correctamente       |
+| 400    | Bad Request - Solicitud inválida             |
+| 401    | Unauthorized - No autenticado                |
+| 403    | Forbidden - No autorizado                    |
+| 404    | Not Found - Recurso no encontrado            |
+| 500    | Internal Server Error - Error del servidor   |
 
+### 🔒 Manejo de Errores
 
-4. Crear Pull Request en GitHub
+La API devuelve errores en el siguiente formato:
 
-## 📜 Licencia
+```json
+{
+    "timestamp": "2025-11-01T10:00:00",
+    "status": 400,
+    "error": "Bad Request",
+    "message": "Descripción detallada del error",
+    "path": "/api/recurso"
+}
+```
 
-Este proyecto es de uso académico exclusivo para el curso de Lenguaje de Programación II de Cibertec.
+### 📝 Notas Importantes
 
-## 📧 Contacto
-
-Para consultas sobre el proyecto, contactar a:
-- Email: Zirelement44@gmail.com
-
----
-
-**Desarrollado con ❤️ por el Grupo 12 - Cibertec 2025**
+- Todos los endpoints requieren autenticación mediante token JWT
+- El token debe enviarse en el header `Authorization: Bearer {token}`
+- Las fechas deben enviarse en formato ISO (YYYY-MM-DD)
+- Las horas deben enviarse en formato 24h (HH:mm)
+- Los IDs son de tipo numérico (Long)
+- La paginación está disponible en endpoints de listado usando `page` y `size`

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Citas - Gestión de Citas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .sidebar-nav i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .navbar-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-title p {
+            font-size: 13px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-info-top {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .user-info-top p {
+            margin: 0;
+        }
+
+        .content {
+            padding: 40px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 25px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        thead th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        tbody td {
+            padding: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .estado-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .estado-programada {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .estado-confirmada {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+
+        .estado-atendida {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .estado-cancelada {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-cancelar {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancelar:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 15px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .sidebar-nav a span {
+                display: none;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .navbar-user {
+                justify-content: center;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            thead th,
+            tbody td {
+                padding: 10px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+       
+        <ul class="sidebar-nav">
+            <li>
+                <a href="/paciente/dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/citas" class="active">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Mis Citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/registrar-cita">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nueva Cita</span>
+                </a>
+            </li>
+            <li>
+                <a href="/paciente/perfil">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+            <li style="margin-top: 30px;">
+                <a href="/auth/logout" style="color: rgba(255, 255, 255, 0.6);">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <div class="navbar-title">
+                <div>
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                    <h1>Mis Citas</h1>
+                    <p>Gestiona todas tus citas médicas</p>
+                </div>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info-top">
+                    <p th:text="${nombrePaciente}">Nombre Paciente</p>
+                    <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7);">Paciente</p>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Historial de Citas</h2>
+                    <a href="/paciente/registrar-cita" style="text-decoration: none; color: white;">
+                        <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-plus"></i> Nueva Cita
+                        </button>
+                    </a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(citas)}" class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No tienes citas registradas</p>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(citas)}" class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Médico</th>
+                                <th>Especialidad</th>
+                                <th>Motivo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cita : ${citas}">
+                                <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">01/01/2025</td>
+                                <td th:text="${cita.hora}">10:00</td>
+                                <td th:text="${cita.medico.nombres} + ' ' + ${cita.medico.apellidos}">Dr. Nombre</td>
+                                <td th:text="${cita.medico.especialidad != null ? cita.medico.especialidad.nombre : 'N/A'}">Medicina General</td>
+                                <td th:text="${cita.motivo}">Consulta general</td>
+                                <td>
+                                    <span th:class="'estado-badge estado-' + ${cita.estado.toLowerCase()}" th:text="${cita.estado}">PROGRAMADA</span>
+                                </td>
+                                <td>
+                                    <button th:if="${cita.estado != 'CANCELADA' && cita.estado != 'ATENDIDA'}" 
+                                            type="button" 
+                                            class="btn-cancelar"
+                                            @click="cancelarCita([[${cita.idCita}]])">
+                                        <i class="fas fa-trash"></i> Cancelar
+                                    </button>
+                                    <span th:if="${cita.estado == 'CANCELADA' || cita.estado == 'ATENDIDA'}" style="color: #999; font-size: 11px;">
+                                        No disponible
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function cancelarCita(citaId) {
+            // Crear modal de confirmación personalizado
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'confirmModal';
+            modal.setAttribute('tabindex', '-1');
+            modal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content" style="border: none; border-radius: 12px; overflow: hidden;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; color: white;">
+                            <h5 style="margin: 0; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-trash-alt"></i> Confirmar Cancelación
+                            </h5>
+                        </div>
+                        <div style="padding: 30px; text-align: center;">
+                            <p style="font-size: 16px; color: #333; margin-bottom: 20px;">¿Estás seguro de que deseas cancelar esta cita?</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center; padding: 20px; border-top: 1px solid #f0f0f0;">
+                            <button type="button" class="btn-cancel" onclick="document.getElementById('confirmModal').remove();" style="padding: 10px 30px; border: none; border-radius: 6px; background-color: #f0f0f0; color: #333; font-weight: 600; cursor: pointer;">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn-confirm" id="confirmBtn" style="padding: 10px 30px; border: none; border-radius: 6px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-check"></i> Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                fetch(`/paciente/citas/${citaId}/cancelar`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    bootstrapModal.hide();
+                    modal.remove();
+                    // ✅ Recargar sin mensaje
+                    setTimeout(() => location.reload(), 300);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    bootstrapModal.hide();
+                    modal.remove();
+                });
+            });
+        }
+    </script>
+</body>
+</html>

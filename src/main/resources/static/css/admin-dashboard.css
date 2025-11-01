@@ -1,0 +1,195 @@
+/* Variables y Tema Morado */
+:root {
+    --purple-primary: #7c3aed;
+    --purple-light: #a78bfa;
+    --purple-dark: #5b21b6;
+    --purple-100: #f3e8ff;
+}
+
+/* Layout Principal */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.d-flex {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+}
+
+.sidebar-sticky {
+    position: sticky;
+    top: 0;
+}
+
+.sidebar .nav-link {
+    color: #495057;
+    border-left: 3px solid transparent;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--purple-primary);
+    background-color: var(--purple-100);
+    border-left-color: var(--purple-primary);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.bg-gradient-purple {
+    background: linear-gradient(135deg, var(--purple-primary) 0%, var(--purple-dark) 100%);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+/* Botones */
+.btn-primary {
+    background-color: var(--purple-primary);
+    border-color: var(--purple-primary);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--purple-dark);
+    border-color: var(--purple-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.4);
+}
+
+.btn-sm {
+    font-size: 0.875rem;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Tablas */
+.table thead {
+    background-color: #f8f9fa;
+    border-top: 2px solid var(--purple-primary);
+}
+
+.table thead th {
+    color: var(--purple-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--purple-primary);
+}
+
+.table tbody tr:hover {
+    background-color: var(--purple-100);
+    transition: background-color 0.2s ease;
+}
+
+/* Modales */
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-content {
+    border-radius: 8px;
+}
+
+/* Badges */
+.bg-purple {
+    background-color: var(--purple-primary) !important;
+}
+
+/* Formularios */
+.form-control, .form-select {
+    border-color: #dee2e6;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Text Color */
+.text-purple {
+    color: var(--purple-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding-left: 0;
+}
+
+.breadcrumb-item a {
+    color: var(--purple-primary);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}

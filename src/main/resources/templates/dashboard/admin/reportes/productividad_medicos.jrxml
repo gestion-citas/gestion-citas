@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports 
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="productividad_medicos" pageWidth="595" pageHeight="842" 
+              columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    
+    <field name="idMedico" class="java.lang.Integer"/>
+    <field name="nombres" class="java.lang.String"/>
+    <field name="apellidos" class="java.lang.String"/>
+    <field name="especialidad" class="java.lang.String"/>
+    <field name="email" class="java.lang.String"/>
+    <field name="telefono" class="java.lang.String"/>
+    
+    <title>
+        <band height="60">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="40"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text>Reporte de Productividad de Médicos</text>
+            </staticText>
+        </band>
+    </title>
+    
+    <pageHeader height="40">
+        <staticText>
+            <reportElement x="0" y="0" width="555" height="30"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="12" isBold="true"/>
+            </textElement>
+            <text>Análisis de Rendimiento por Médico</text>
+        </staticText>
+    </pageHeader>
+    
+    <columnHeader height="30">
+        <staticText>
+            <reportElement x="0" y="0" width="70" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>ID</text>
+        </staticText>
+        <staticText>
+            <reportElement x="70" y="0" width="120" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Nombre</text>
+        </staticText>
+        <staticText>
+            <reportElement x="190" y="0" width="115" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Especialidad</text>
+        </staticText>
+        <staticText>
+            <reportElement x="305" y="0" width="125" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Email</text>
+        </staticText>
+        <staticText>
+            <reportElement x="430" y="0" width="125" height="30" backcolor="#E8E8E8"/>
+            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+            <text>Teléfono</text>
+        </staticText>
+    </columnHeader>
+    
+    <detail height="25">
+        <textField>
+            <reportElement x="0" y="0" width="70" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{idMedico}.toString()]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="70" y="0" width="120" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{nombres} + " " + $F{apellidos}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="190" y="0" width="115" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{especialidad}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="305" y="0" width="125" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{email}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="430" y="0" width="125" height="25"/>
+            <box><pen lineWidth="0.5" lineColor="#CCCCCC"/></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA[$F{telefono}]]></textFieldExpression>
+        </textField>
+    </detail>
+    
+    <pageFooter height="30">
+        <staticText>
+            <reportElement x="0" y="5" width="300" height="20"/>
+            <textElement verticalAlignment="Middle"><font size="8"/></textElement>
+            <text>Sistema de Gestión de Citas</text>
+        </staticText>
+        <textField>
+            <reportElement x="450" y="5" width="105" height="20"/>
+            <textElement textAlignment="Right" verticalAlignment="Middle"><font size="8"/></textElement>
+            <textFieldExpression class="java.lang.String"><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+        </textField>
+    </pageFooter>
+</jasperReport>

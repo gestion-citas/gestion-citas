@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes - Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f7fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .main-wrapper { display: flex; }
+        .sidebar { width: 280px; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; color: white; position: fixed; left: 0; top: 0; overflow-y: auto; }
+        .sidebar-header { text-align: center; margin-bottom: 40px; }
+        .sidebar-header h4 { color: white; font-weight: 700; margin: 0; }
+        .sidebar-header p { color: rgba(255,255,255,0.7); font-size: 12px; margin: 5px 0 0 0; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { margin-bottom: 15px; }
+        .sidebar a { color: rgba(255,255,255,0.8); text-decoration: none; display: flex; align-items: center; padding: 12px; border-radius: 8px; transition: all 0.3s; }
+        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar i { margin-right: 12px; }
+        .logout-link { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .logout-link a { color: rgba(255,255,255,0.9); }
+        .content-area { margin-left: 280px; width: calc(100% - 280px); }
+        .page-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .page-header h1 { margin: 0; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .page-header p { margin: 5px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9); }
+        .page-content { padding: 30px; }
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px; }
+        .search-box { flex: 1; max-width: 400px; }
+        .search-box input { width: 100%; padding: 10px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
+        .search-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        .btn-nuevo { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-nuevo:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); color: white; }
+        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .table { margin: 0; font-size: 14px; }
+        .table thead { background: #f8f9fa; border-bottom: 2px solid #e0e0e0; }
+        .table thead th { color: #333; font-weight: 600; padding: 15px; border: none; }
+        .table tbody td { padding: 15px; border: none; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .table tbody tr:last-child td { border-bottom: none; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-edit { background: #ffa94d; color: white; }
+        .btn-edit:hover { background: #ff922b; transform: translateY(-1px); color: white; }
+        .btn-delete { background: #ff6b6b; color: white; }
+        .btn-delete:hover { background: #fa5252; transform: translateY(-1px); }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state i { font-size: 48px; margin-bottom: 20px; opacity: 0.5; }
+        .alert { border-radius: 8px; border: none; margin-bottom: 20px; }
+        .modal-content { border-radius: 15px; border: none; }
+        .modal-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 15px 15px 0 0; }
+        .modal-header .btn-close { filter: brightness(0) invert(1); }
+        .modal-title { color: white; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4>🏥 Gestión Citas</h4>
+                <p>Bienvenido al sistema</p>
+            </div>
+            <ul>
+                <li><a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="/admin/usuarios"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a href="/admin/medicos"><i class="fas fa-user-md"></i> Médicos</a></li>
+                <li><a href="/admin/pacientes" class="active"><i class="fas fa-hospital-user"></i> Pacientes</a></li>
+                <li><a href="/admin/especialidades"><i class="fas fa-stethoscope"></i> Especialidades</a></li>
+                <li><a href="/admin/citas"><i class="fas fa-calendar-check"></i> Citas</a></li>
+                <li><a href="/admin/reportes"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                <li class="logout-link"><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-area">
+            <div class="page-header">
+                <h1><i class="fas fa-hospital-user"></i> Gestión de Pacientes</h1>
+                <p>Administra todos los pacientes del sistema</p>
+            </div>
+
+            <div class="page-content">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="action-bar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar paciente por nombre, DNI, email...">
+                    </div>
+                    <button class="btn-nuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoPaciente">
+                        <i class="fas fa-plus"></i> Nuevo Paciente
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" th:if="${!#lists.isEmpty(pacientes)}">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-user"></i> Nombres</th>
+                                <th><i class="fas fa-user"></i> Apellidos</th>
+                                <th><i class="fas fa-id-card"></i> DNI</th>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <th><i class="fas fa-phone"></i> Teléfono</th>
+                                <th><i class="fas fa-cog"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="pac : ${pacientes}">
+                                <td th:text="${pac.idPaciente}"></td>
+                                <td th:text="${pac.nombres}"></td>
+                                <td th:text="${pac.apellidos}"></td>
+                                <td th:text="${pac.dni}"></td>
+                                <td th:text="${pac.email}"></td>
+                                <td th:text="${pac.telefono}"></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <!-- ✅ BOTÓN EDITAR -->
+                                        <button class="btn-sm btn-edit btn-editar" 
+                                                title="Editar paciente"
+                                                th:data-id="${pac.idPaciente}"
+                                                th:data-nombres="${pac.nombres}"
+                                                th:data-apellidos="${pac.apellidos}"
+                                                th:data-dni="${pac.dni}"
+                                                th:data-email="${pac.email}"
+                                                th:data-telefono="${pac.telefono}"
+                                                th:data-direccion="${pac.direccion}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        
+                                        <!-- ✅ BOTÓN ELIMINAR -->
+                                        <button class="btn-sm btn-delete btn-eliminar" 
+                                                title="Eliminar paciente"
+                                                th:data-id="${pac.idPaciente}"
+                                                th:data-nombre="${pac.nombres + ' ' + pac.apellidos}">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${#lists.isEmpty(pacientes)}" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h4>No hay pacientes</h4>
+                        <p>Comienza agregando tu primer paciente al sistema</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO PACIENTE -->
+    <div class="modal fade" id="modalNuevoPaciente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus"></i> Registrar Nuevo Paciente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNuevoPaciente" th:action="@{/admin/pacientes/guardar}" method="post" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" class="form-control" name="nombres" placeholder="Juan Carlos" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" class="form-control" name="apellidos" placeholder="Pérez García" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                                <input type="text" class="form-control" name="dni" placeholder="12345678" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" name="email" placeholder="paciente@ejemplo.com" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                                <input type="tel" class="form-control" name="telefono" placeholder="+51 999 999 999" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <input type="text" class="form-control" name="direccion" placeholder="Av. Principal 123">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="formNuevoPaciente" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">Registrar Paciente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ MODAL EDITAR PACIENTE -->
+    <div class="modal fade" id="modalEditarPaciente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-edit"></i> Editar Paciente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formEditarPaciente" th:action="@{/admin/pacientes/actualizar}" method="post" novalidate>
+                        <input type="hidden" id="editIdPaciente" name="idPaciente">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Nombres *</label>
+                                <input type="text" class="form-control" id="editNombres" name="nombres" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Apellidos *</label>
+                                <input type="text" class="form-control" id="editApellidos" name="apellidos" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-id-card"></i> DNI *</label>
+                                <input type="text" class="form-control" id="editDni" name="dni" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-envelope"></i> Email *</label>
+                                <input type="email" class="form-control" id="editEmail" name="email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-phone"></i> Teléfono *</label>
+                                <input type="tel" class="form-control" id="editTelefono" name="telefono" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                                <input type="text" class="form-control" id="editDireccion" name="direccion">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="formEditarPaciente" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ MODAL ELIMINAR PACIENTE -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar al paciente?</p>
+                    <p class="fw-bold" id="nombrePaciente"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formEliminar" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ✅ JAVASCRIPT FUNCIONAL -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 🔍 BÚSQUEDA EN TIEMPO REAL
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const searchValue = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('.table tbody tr');
+                    
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? '' : 'none';
+                    });
+                });
+            }
+
+            // ✏️ EDITAR PACIENTE
+            const modalEditarElement = document.getElementById('modalEditarPaciente');
+            if (modalEditarElement) {
+                const modalEditar = new bootstrap.Modal(modalEditarElement);
+                
+                document.querySelectorAll('.btn-editar').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const id = this.getAttribute('data-id');
+                        const nombres = this.getAttribute('data-nombres');
+                        const apellidos = this.getAttribute('data-apellidos');
+                        const dni = this.getAttribute('data-dni');
+                        const email = this.getAttribute('data-email');
+                        const telefono = this.getAttribute('data-telefono');
+                        const direccion = this.getAttribute('data-direccion');
+                        
+                        document.getElementById('editIdPaciente').value = id || '';
+                        document.getElementById('editNombres').value = nombres || '';
+                        document.getElementById('editApellidos').value = apellidos || '';
+                        document.getElementById('editDni').value = dni || '';
+                        document.getElementById('editEmail').value = email || '';
+                        document.getElementById('editTelefono').value = telefono || '';
+                        document.getElementById('editDireccion').value = direccion || '';
+                        
+                        modalEditar.show();
+                    });
+                });
+            }
+
+            // 🗑️ ELIMINAR PACIENTE
+            const modalEliminarElement = document.getElementById('modalEliminar');
+            if (modalEliminarElement) {
+                const modalEliminar = new bootstrap.Modal(modalEliminarElement);
+                const formEliminar = document.getElementById('formEliminar');
+                const nombrePaciente = document.getElementById('nombrePaciente');
+                
+                document.querySelectorAll('.btn-eliminar').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const id = this.getAttribute('data-id');
+                        const nombre = this.getAttribute('data-nombre');
+                        
+                        if (nombrePaciente) nombrePaciente.textContent = nombre || 'Sin nombre';
+                        if (formEliminar) formEliminar.action = `/admin/pacientes/eliminar/${id}`;
+                        
+                        modalEliminar.show();
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

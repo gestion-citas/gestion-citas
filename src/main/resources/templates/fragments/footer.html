@@ -4,37 +4,12 @@
     <meta charset="UTF-8">
 </head>
 <body>
-    <!-- Footer Fragment -->
-    <footer th:fragment="footer" class="mt-5 py-4 bg-dark text-white">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-hospital-user me-2"></i>Gestión Médica</h5>
-                    <p class="text-muted">Sistema integral de gestión de citas médicas</p>
-                </div>
-                <div class="col-md-3">
-                    <h6>Enlaces</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="/medicos" class="text-muted text-decoration-none">Médicos</a></li>
-                        <li><a href="/pacientes" class="text-muted text-decoration-none">Pacientes</a></li>
-                        <li><a href="/citas" class="text-muted text-decoration-none">Citas</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h6>Contacto</h6>
-                    <p class="text-muted mb-0">
-                        <i class="fas fa-envelope me-2"></i>info@gestionmedica.com
-                    </p>
-                    <p class="text-muted">
-                        <i class="fas fa-phone me-2"></i>(01) 123-4567
-                    </p>
-                </div>
-            </div>
-            <hr class="bg-secondary">
-            <div class="text-center text-muted">
-                <small>&copy; 2025 Gestión Médica. Proyecto académico - Cibertec</small>
-            </div>
-        </div>
-    </footer>
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="bg-light border-top mt-5 py-4">
+    <div class="container-fluid text-center text-muted">
+        <p class="mb-0">&copy; 2025 Sistema de Gestión Médica. Todos los derechos reservados.</p>
+        <small>Desarrollado con <i class="fas fa-heart text-danger"></i> usando Spring Boot y Thymeleaf</small>
+    </div>
+</footer>
 </body>
 </html>

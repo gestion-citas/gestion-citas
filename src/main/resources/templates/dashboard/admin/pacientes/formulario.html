@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-3">
+                        <h5>Panel Admin</h5>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin}">
+                                <i class="fas fa-chart-bar"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/usuarios}">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/medicos}">
+                                <i class="fas fa-user-md"></i> Médicos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/admin/pacientes}">
+                                <i class="fas fa-user-injured"></i> Pacientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/especialidades}">
+                                <i class="fas fa-stethoscope"></i> Especialidades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/citas}">
+                                <i class="fas fa-calendar-alt"></i> Citas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/logout}">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2" th:text="${paciente.idPaciente != null ? 'Editar Paciente' : 'Nuevo Paciente'}"></h1>
+                    <a th:href="@{/admin/pacientes}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <!-- Formulario -->
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form th:action="@{/admin/pacientes/guardar}" th:object="${paciente}" method="post">
+                                    <input type="hidden" th:field="*{idPaciente}">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="nombres" class="form-label">Nombres *</label>
+                                                <input type="text" class="form-control" th:field="*{nombres}" 
+                                                       th:class="${#fields.hasErrors('nombres')} ? 'form-control is-invalid' : 'form-control'" required>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombres')}" th:errors="*{nombres}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="apellidos" class="form-label">Apellidos *</label>
+                                                <input type="text" class="form-control" th:field="*{apellidos}" 
+                                                       th:class="${#fields.hasErrors('apellidos')} ? 'form-control is-invalid' : 'form-control'" required>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="dni" class="form-label">DNI *</label>
+                                                <input type="text" class="form-control" th:field="*{dni}" 
+                                                       th:class="${#fields.hasErrors('dni')} ? 'form-control is-invalid' : 'form-control'" 
+                                                       pattern="[0-9]{8}" maxlength="8" required>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="telefono" class="form-label">Teléfono</label>
+                                                <input type="text" class="form-control" th:field="*{telefono}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                                                <input type="date" class="form-control" th:field="*{fechaNacimiento}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="genero" class="form-label">Género</label>
+                                                <select class="form-select" th:field="*{genero}">
+                                                    <option value="">Seleccionar</option>
+                                                    <option value="M">Masculino</option>
+                                                    <option value="F">Femenino</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" th:field="*{email}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="estadoCivil" class="form-label">Estado Civil</label>
+                                                <select class="form-select" th:field="*{estadoCivil}">
+                                                    <option value="">Seleccionar</option>
+                                                    <option value="Soltero(a)">Soltero(a)</option>
+                                                    <option value="Casado(a)">Casado(a)</option>
+                                                    <option value="Divorciado(a)">Divorciado(a)</option>
+                                                    <option value="Viudo(a)">Viudo(a)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <textarea class="form-control" th:field="*{direccion}" rows="2"></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a th:href="@{/admin/pacientes}" class="btn btn-secondary">Cancelar</a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Guardar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
