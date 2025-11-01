@@ -65,25 +65,20 @@ public class PacienteController {
         if (usuario.isPresent()) {
             model.addAttribute("usuario", usuario.get());
             
-            // Buscar el paciente asociado al usuario
             Optional<Paciente> pacienteOpt = pacienteRepository.findByUsuario(usuario.get());
             if (pacienteOpt.isPresent()) {
                 Paciente paciente = pacienteOpt.get();
                 model.addAttribute("paciente", paciente);
                 
-                // Obtener estadísticas del paciente
                 var estadisticas = estadisticaService.obtenerEstadisticasPaciente(paciente.getIdPaciente());
                 model.addAllAttributes(estadisticas);
                 
-                // Obtener próximas citas
                 var proximasCitas = citaRepository.findProximasCitasPaciente(paciente.getIdPaciente());
                 model.addAttribute("proximasCitas", proximasCitas);
                 
-                // Obtener historial de citas
                 var historialCitas = citaRepository.findByPacienteId(paciente.getIdPaciente());
                 model.addAttribute("historialCitas", historialCitas);
                 
-                // Obtener médicos disponibles para nuevas citas
                 var medicosDisponibles = medicoRepository.findAllActivos();
                 model.addAttribute("medicosDisponibles", medicosDisponibles);
                 

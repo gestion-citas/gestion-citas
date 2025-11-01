@@ -47,7 +47,7 @@ public class DataInitializer implements CommandLineRunner {
             // ========== USUARIO ADMIN ==========
             Usuario admin = new Usuario();
             admin.setUsername("admin");
-            admin.setPassword("1234");  // ✅ CONTRASEÑA PLANA, SIN ENCRIPTAR
+            admin.setPassword("1234");
             admin.setEmail("admin@hospital.com");
             admin.setNombres("Administrador");
             admin.setApellidos("Sistema");
@@ -58,7 +58,7 @@ public class DataInitializer implements CommandLineRunner {
             // ========== USUARIOS MÉDICOS ==========
             Usuario usuarioMedico1 = new Usuario();
             usuarioMedico1.setUsername("medico");
-            usuarioMedico1.setPassword("1234");  // ✅ CONTRASEÑA PLANA
+            usuarioMedico1.setPassword("1234");
             usuarioMedico1.setEmail("medico@hospital.com");
             usuarioMedico1.setNombres("Dr. Juan");
             usuarioMedico1.setApellidos("García López");

@@ -52,7 +52,6 @@ public class Paciente {
     @Column(name = "fecha_creacion")
     private Timestamp fechaCreacion;
 
-    // Constructores
     public Paciente() {}
 
     public Paciente(Usuario usuario, String nombres, String apellidos, String dni, 
@@ -66,8 +65,6 @@ public class Paciente {
         this.activo = activo;
         this.fechaCreacion = fechaCreacion;
     }
-
-    // Getters y Setters
     public Integer getIdPaciente() {
         return idPaciente;
     }

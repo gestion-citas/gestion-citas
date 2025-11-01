@@ -52,14 +52,11 @@ public class CitaService {
         return citaRepository.count();
     }
 
-    // ✅ NUEVO: Obtener citas por estado
     public List<Cita> obtenerPorEstado(String estado) {
         return citaRepository.findAll().stream()
                 .filter(c -> estado.equals(c.getEstado()))
                 .collect(Collectors.toList());
     }
-
-    // ✅ NUEVO: Actualizar estado de cita
     @Transactional
     public Cita actualizarEstadoCita(Integer citaId, String nuevoEstado) {
         Optional<Cita> citaOpt = citaRepository.findById(citaId);

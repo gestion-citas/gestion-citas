@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * SERVICIO DE USUARIOS
- */
-
 @Service
 public class UsuarioService {
 
@@ -40,8 +36,6 @@ public class UsuarioService {
     public long contarTotal() {
         return usuarioRepository.count();
     }
- // En UsuarioService.java agregar:
-
     public boolean existeUsername(String username) {
         return usuarioRepository.findByUsername(username).isPresent();
     }

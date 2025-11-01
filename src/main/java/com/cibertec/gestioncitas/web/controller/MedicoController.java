@@ -87,7 +87,6 @@ public class MedicoController {
                 model.addAttribute("errorEstadisticas", "No se pudieron cargar algunas estadísticas");
             }
 
-            // Cargar próximas citas
             try {
                 var proximasCitas = citaRepository.findAllCitasByMedicoWithPaciente(medico.getIdMedico())
                         .stream()
@@ -97,8 +96,6 @@ public class MedicoController {
             } catch (Exception e) {
                 model.addAttribute("errorCitas", "No se pudieron cargar las citas");
             }
-
-            // Cargar información de especialidad
             try {
                 String especialidadNombre = medico.getEspecialidad() != null ?
                         medico.getEspecialidad().getNombre() : "Sin especialidad";

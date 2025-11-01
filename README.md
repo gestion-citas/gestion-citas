@@ -25,9 +25,9 @@ Sistema web completo desarrollado en Java con Spring Boot que permite la gestió
 
 ### 🔐 Sistema de Autenticación y Autorización
 - ✅ Login seguro con Spring Security
-- ✅ Gestión de roles (ADMIN, MEDICO, RECEPCIONISTA)
-- ✅ Autenticación JWT para API REST
-- ✅ Control de acceso por endpoints
+- ✅ Gestión de roles (ADMIN, MEDICO, PACIENTE)
+- ✅ Autenticación basada en sesiones
+- ✅ Control de acceso por roles y endpoints
 
 ### 👨‍⚕️ Gestión de Médicos
 - ✅ CRUD completo de médicos
@@ -89,8 +89,9 @@ Sistema web completo desarrollado en Java con Spring Boot que permite la gestió
 
 ### Seguridad
 - **Spring Security 6** - Framework de seguridad
-- **JWT (JSON Web Tokens)** - Autenticación stateless
-- **BCrypt** - Encriptación de contraseñas
+- **Session Based Auth** - Autenticación basada en sesiones
+- **Role Based Access Control** - Control de acceso basado en roles
+- **NoOpPasswordEncoder** - Codificación de contraseñas (Modo desarrollo)
 
 ### Frontend
 - **Thymeleaf** - Motor de plantillas
@@ -178,7 +179,7 @@ mvn spring-boot:run
 - **URL Principal**: http://localhost:8080
 - **Usuario Admin**: admin / admin123
 - **Usuario Médico**: medico / medico123
-- **Usuario Recepcionista**: recepcionista / recep123
+- **Usuario Paciente**: paciente / paciente123
 
 ## 📁 Estructura del Proyecto
 
@@ -187,18 +188,17 @@ src/
 ├── main/
 │   ├── java/com/cibertec/gestioncitas/
 │   │   ├── config/          # Configuraciones (Security, JWT, etc.)
-│   │   ├── controller/      # Controladores Web y REST
-│   │   │   ├── CitaController.java
-│   │   │   ├── CitaRestController.java
-│   │   │   ├── CitaWebController.java
-│   │   │   ├── DashboardController.java
-│   │   │   ├── MedicoController.java
-│   │   │   ├── MedicoRestController.java
-│   │   │   ├── MedicoWebController.java
-│   │   │   ├── PacienteController.java
-│   │   │   ├── PacienteWebController.java
-│   │   │   ├── ReporteController.java
-│   │   │   └── UsuarioController.java
+├── web/
+│   └── controller/      # Controladores Web
+│       ├── AdminController.java
+│       ├── AuthController.java
+│       ├── CustomErrorController.java
+│       ├── DevToolsController.java
+│       ├── HomeController.java
+│       ├── LoginController.java
+│       ├── MedicoController.java
+│       ├── PacienteController.java
+│       └── ReporteController.java
 │   │   ├── entity/          # Entidades JPA
 │   │   │   ├── Cita.java
 │   │   │   ├── Especialidad.java
@@ -289,10 +289,10 @@ POST /api/auth/login
 Respuesta exitosa:
 ```json
 {
-    "token": "eyJhbGciOiJIUzI1NiIsIn...",
-    "type": "Bearer",
+    "success": true,
     "username": "usuario",
-    "roles": ["ROLE_ADMIN"]
+    "roles": ["ROLE_ADMIN", "ROLE_MEDICO", "ROLE_PACIENTE"],
+    "redirect": "/dashboard"
 }
 ```
 
@@ -435,3 +435,26 @@ La API devuelve errores en el siguiente formato:
 - Las horas deben enviarse en formato 24h (HH:mm)
 - Los IDs son de tipo numérico (Long)
 - La paginación está disponible en endpoints de listado usando `page` y `size`
+
+## 🔑 Permisos por Rol
+
+### 👑 ROLE_ADMIN
+- Gestión completa de usuarios del sistema
+- Gestión de médicos y sus especialidades
+- Acceso al dashboard administrativo
+- Generación de todos los reportes
+- Configuración del sistema
+
+### 👨‍⚕️ ROLE_MEDICO
+- Ver y gestionar sus citas asignadas
+- Actualizar estado de citas (COMPLETADA, NO_ASISTIO)
+- Ver historial de pacientes atendidos
+- Gestionar su disponibilidad horaria
+- Ver sus estadísticas personales
+
+### 👤 ROLE_PACIENTE
+- Solicitar nuevas citas médicas
+- Ver y cancelar sus citas programadas
+- Ver su historial médico
+- Actualizar sus datos personales
+- Ver disponibilidad de médicos

@@ -36,7 +36,6 @@ public class Usuario {
     @Column(name = "fecha_creacion")
     private Timestamp fechaCreacion;
 
-    // Constructores
     public Usuario() {}
 
     public Usuario(String nombres, String apellidos, String email, String username, 
@@ -50,8 +49,6 @@ public class Usuario {
         this.activo = activo;
         this.fechaCreacion = fechaCreacion;
     }
-
-    // Getters y Setters
     public Integer getIdUsuario() {
         return idUsuario;
     }

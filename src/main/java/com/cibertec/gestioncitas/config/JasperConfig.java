@@ -29,24 +29,10 @@ public class JasperConfig {
         return compileReport("/reportes/productividad_medicos.jrxml");
     }
 
-    // ========== COMENTAR ESTOS 2 REPORTES TEMPORALMENTE ==========
-    
-//    @Bean
-//    public JasperReport reporteCitas() {
-//        return compileReport("/reportes/reporte_citas.jrxml");
-//    }
-
     @Bean
     public JasperReport reporteEstadistico() {
         return compileReport("/reportes/reporte_estadistico.jrxml");
     }
-
-//    @Bean
-//    public JasperReport reporteRendimientoMedicos() {
-//        return compileReport("/reportes/reporte_rendimiento_medicos.jrxml");
-//    }
-
-    // =============================================================
 
     private JasperReport compileReport(String reportPath) {
         try {

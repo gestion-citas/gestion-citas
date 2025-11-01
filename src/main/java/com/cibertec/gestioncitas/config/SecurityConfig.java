@@ -44,9 +44,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll() // ✅ PERMITIR TODAS LAS PETICIONES - EL CONTROL DE ACCESO SE HACE EN LOS CONTROLADORES
+                .anyRequest().permitAll()
             )
-            .csrf(csrf -> csrf.disable()) // ✅ DESHABILITAR CSRF COMPLETAMENTE
+            .csrf(csrf -> csrf.disable())
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.disable())
             );

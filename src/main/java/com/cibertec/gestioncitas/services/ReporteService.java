@@ -7,16 +7,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * SERVICIO DE REPORTES
- * Genera reportes en PDF con DATOS REALES de la base de datos
- */
 @Service
 public class ReporteService {
 
-    /**
-     * Obtiene la ruta base para guardar reportes
-     */
     private String obtenerRutaReportes() {
         String rutaTemp = System.getProperty("user.home") + File.separator + "gestion_citas_reportes";
         File carpeta = new File(rutaTemp);
@@ -26,34 +19,19 @@ public class ReporteService {
         return rutaTemp;
     }
 
-    /**
-     * REPORTE: Citas por Médico
-     * Obtiene datos REALES de la BD y los muestra en el PDF
-     */
     public String generarReporteCitasPorMedico() throws JRException {
         try {
-            
-            // 1. Cargar plantilla JRXML
             InputStream reporteStream = getClass().getResourceAsStream("/reportes/citas_por_medico.jrxml");
             if (reporteStream == null) {
-                throw new Exception("❌ No se encontró: /reportes/citas_por_medico.jrxml");
+                throw new Exception("No se encontró: /reportes/citas_por_medico.jrxml");
             }
             
-            // 2. Compilar
             JasperReport jasperReport = JasperCompileManager.compileReport(reporteStream);
-            
-            // 3. Preparar parámetros VACÍOS (los datos vienen de la BD)
             Map<String, Object> parametros = new HashMap<>();
-            
-            // 4. IMPORTANTE: Usar una DataSource que traiga datos de la BD
-            // En este caso usamos EmptyDataSource pero la plantilla debe tener query SQL
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JREmptyDataSource());
             
-            // 5. Guardar con ruta ABSOLUTA
             String rutaBase = obtenerRutaReportes();
             String rutaCompleta = rutaBase + File.separator + "citas_por_medico.pdf";
-            
-            // 6. Exportar a PDF
             JasperExportManager.exportReportToPdfFile(jasperPrint, rutaCompleta);
             
             return rutaCompleta;
@@ -63,15 +41,11 @@ public class ReporteService {
         }
     }
 
-    /**
-     * REPORTE: Citas por Especialidad
-     */
     public String generarReporteCitasPorEspecialidad() throws JRException {
         try {
-            
             InputStream reporteStream = getClass().getResourceAsStream("/reportes/citas_por_especialidad.jrxml");
             if (reporteStream == null) {
-                throw new Exception("❌ No se encontró: /reportes/citas_por_especialidad.jrxml");
+                throw new Exception("No se encontró: /reportes/citas_por_especialidad.jrxml");
             }
             
             JasperReport jasperReport = JasperCompileManager.compileReport(reporteStream);
@@ -88,15 +62,11 @@ public class ReporteService {
         }
     }
 
-    /**
-     * REPORTE: Estadísticas Mensuales
-     */
     public String generarReporteEstadisticasMensuales() throws JRException {
         try {
-            
             InputStream reporteStream = getClass().getResourceAsStream("/reportes/estadisticas_mensuales.jrxml");
             if (reporteStream == null) {
-                throw new Exception("❌ No se encontró: /reportes/estadisticas_mensuales.jrxml");
+                throw new Exception("No se encontró: /reportes/estadisticas_mensuales.jrxml");
             }
             
             JasperReport jasperReport = JasperCompileManager.compileReport(reporteStream);

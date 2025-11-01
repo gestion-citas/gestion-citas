@@ -42,9 +42,7 @@ public class Cita {
     @Column(name = "asistencia")
     private Boolean asistencia;
 
-    // NO INCLUIR: fechaHora y fechaCreacion (columnas calculadas de BD)
 
-    // ============= GETTERS Y SETTERS =============
 
     public Integer getIdCita() { return idCita; }
     public void setIdCita(Integer idCita) { this.idCita = idCita; }

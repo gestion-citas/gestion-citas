@@ -42,17 +42,12 @@ public class EstadisticaService {
     public Map<String, Object> obtenerEstadisticasMedico(Integer idMedico) {
         Map<String, Object> estadisticas = new HashMap<>();
         
-        // Citas totales y por estado
         long totalCitas = citaRepository.countByMedicoId(idMedico);
         long citasPendientes = citaRepository.countByMedicoIdAndEstado(idMedico, "PROGRAMADA");
         long citasConfirmadas = citaRepository.countByMedicoIdAndEstado(idMedico, "CONFIRMADA");
         long citasCompletadas = citaRepository.countByMedicoIdAndEstado(idMedico, "COMPLETADA");
         long citasCanceladas = citaRepository.countByMedicoIdAndEstado(idMedico, "CANCELADA");
-        
-        // Citas de hoy
         long citasHoy = citaRepository.countCitasHoyByMedico(idMedico);
-        
-        // Pacientes únicos
         long pacientesUnicos = citaRepository.countPacientesUnicosByMedico(idMedico);
         
         estadisticas.put("totalCitas", totalCitas);
@@ -69,17 +64,12 @@ public class EstadisticaService {
     public Map<String, Object> obtenerEstadisticasPaciente(Integer idPaciente) {
         Map<String, Object> estadisticas = new HashMap<>();
         
-        // Citas totales y por estado
         long totalCitas = citaRepository.countByPacienteId(idPaciente);
         long citasPendientes = citaRepository.countByPacienteIdAndEstado(idPaciente, "PROGRAMADA");
         long citasConfirmadas = citaRepository.countByPacienteIdAndEstado(idPaciente, "CONFIRMADA");
         long citasCompletadas = citaRepository.countByPacienteIdAndEstado(idPaciente, "COMPLETADA");
         long citasCanceladas = citaRepository.countByPacienteIdAndEstado(idPaciente, "CANCELADA");
-        
-        // Citas de hoy
         long citasHoy = citaRepository.countCitasHoyByPaciente(idPaciente);
-        
-        // Médicos diferentes visitados
         long medicosVisitados = citaRepository.countMedicosUnicosByPaciente(idPaciente);
         
         estadisticas.put("totalCitas", totalCitas);

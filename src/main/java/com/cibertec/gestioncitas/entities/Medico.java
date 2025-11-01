@@ -44,7 +44,6 @@ public class Medico {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    // Constructores
     public Medico() {}
 
     public Medico(String nombres, String apellidos, String dni, String email, 
@@ -59,7 +58,6 @@ public class Medico {
         this.activo = activo;
     }
 
-    // Getters y Setters
     public Integer getIdMedico() {
         return idMedico;
     }
